@@ -45,11 +45,15 @@ const BillingSchema = new mongoose.Schema({
     },
     method: {
       type: String,
-      enum: ['Cash', 'Card', 'UPI', 'Insurance'],
+      enum: ['Cash', 'Card', 'UPI', 'Insurance', 'Online'],
       default: 'Cash'
     },
     remarks: String
   }],
+  razorpayOrderId: {
+    type: String,
+    default: null
+  },
   status: {
     type: String,
     enum: ['Unpaid', 'Partially Paid', 'Paid'],

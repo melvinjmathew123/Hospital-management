@@ -342,8 +342,8 @@ export default function HospitalAdminDashboard() {
                         <span className={`badge ${badgeClass}`}>{bill.status}</span>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                        <span>Total: ${bill.totalAmount}</span>
-                        <span>Bal: ${bill.balanceAmount}</span>
+                        <span>Total: ₹{bill.totalAmount}</span>
+                        <span>Bal: ₹{bill.balanceAmount}</span>
                       </div>
                     </div>
                   );
@@ -377,26 +377,51 @@ export default function HospitalAdminDashboard() {
                         {selectedBill.services.map((s, idx) => (
                           <tr key={idx}>
                             <td>{s.name}</td>
-                            <td>${s.cost}</td>
+                            <td>₹{s.cost}</td>
                             <td>{s.quantity || 1}</td>
-                            <td>${s.cost * (s.quantity || 1)}</td>
+                            <td>₹{s.cost * (s.quantity || 1)}</td>
                           </tr>
                         ))}
                         <tr style={{ fontWeight: 'bold', borderTop: '2px solid var(--glass-border)' }}>
                           <td colSpan="3">Total Charges</td>
-                          <td>${selectedBill.totalAmount}</td>
+                          <td>₹{selectedBill.totalAmount}</td>
                         </tr>
                         <tr style={{ color: 'var(--color-success)', fontWeight: 'bold' }}>
                           <td colSpan="3">Total Payments</td>
-                          <td>-${selectedBill.paidAmount}</td>
+                          <td>-₹{selectedBill.paidAmount}</td>
                         </tr>
                         <tr style={{ color: 'var(--color-danger)', fontWeight: 'bold' }}>
                           <td colSpan="3">Outstanding Balance</td>
-                          <td>${selectedBill.balanceAmount}</td>
+                          <td>₹{selectedBill.balanceAmount}</td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Payment Ledger/Transaction History for Admin */}
+                  {selectedBill.payments && selectedBill.payments.length > 0 && (
+                    <div style={{ marginBottom: '1.5rem', background: 'rgba(255,255,255,0.01)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px dashed var(--glass-border)' }}>
+                      <h3 style={{ fontSize: '0.9rem', marginBottom: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Transaction Ledger History</h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        {selectedBill.payments.map((payment, idx) => (
+                          <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', paddingBottom: '0.25rem', borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
+                            <div>
+                              <span className="badge" style={{
+                                background: payment.method === 'Online' ? 'rgba(34, 211, 238, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                                color: payment.method === 'Online' ? '#22d3ee' : 'var(--text-main)',
+                                marginRight: '0.5rem',
+                                padding: '0.1rem 0.4rem',
+                                fontSize: '0.65rem'
+                              }}>{payment.method}</span>
+                              <span style={{ color: 'var(--text-muted)' }}>{new Date(payment.paymentDate).toLocaleDateString()}</span>
+                              {payment.remarks && <span style={{ fontStyle: 'italic', color: 'var(--text-muted)', marginLeft: '0.5rem' }}>— {payment.remarks}</span>}
+                            </div>
+                            <b style={{ color: 'var(--color-success)' }}>+₹{payment.amount}</b>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Add Custom Charges */}
                   <form onSubmit={handleAddCharge} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '1rem', alignItems: 'flex-end', borderTop: '1px solid var(--glass-border)', paddingTop: '1.5rem', marginBottom: '1.5rem' }}>
@@ -412,7 +437,7 @@ export default function HospitalAdminDashboard() {
                       />
                     </div>
                     <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label className="form-label" style={{ fontSize: '0.75rem' }}>Cost ($)</label>
+                      <label className="form-label" style={{ fontSize: '0.75rem' }}>Cost (₹)</label>
                       <input
                         type="number"
                         className="form-input"
@@ -430,7 +455,7 @@ export default function HospitalAdminDashboard() {
                     <h3 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Post Payment Installment</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 1.6fr 1fr', gap: '1rem', alignItems: 'flex-end' }}>
                       <div className="form-group" style={{ marginBottom: 0 }}>
-                        <label className="form-label" style={{ fontSize: '0.75rem' }}>Amount Paid ($)</label>
+                        <label className="form-label" style={{ fontSize: '0.75rem' }}>Amount Paid (₹)</label>
                         <input
                           type="number"
                           className="form-input"
@@ -450,6 +475,7 @@ export default function HospitalAdminDashboard() {
                           <option value="Cash">Cash</option>
                           <option value="Card">Card</option>
                           <option value="UPI">UPI</option>
+                          <option value="Online">Online (Razorpay)</option>
                         </select>
                       </div>
                       <div className="form-group" style={{ marginBottom: 0 }}>
@@ -492,7 +518,7 @@ export default function HospitalAdminDashboard() {
                       />
                     </div>
                     <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label className="form-label" style={{ fontSize: '0.75rem' }}>Coverage ($)</label>
+                      <label className="form-label" style={{ fontSize: '0.75rem' }}>Coverage (₹)</label>
                       <input
                         type="number"
                         className="form-input"

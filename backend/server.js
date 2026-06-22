@@ -12,6 +12,7 @@ const clinicalRoutes = require('./routes/clinical');
 const labRoutes = require('./routes/labs');
 const pharmacyRoutes = require('./routes/pharmacy');
 const billingRoutes = require('./routes/billing');
+const paymentRoutes = require('./routes/payment');
 
 // Load env vars
 dotenv.config();
@@ -36,6 +37,8 @@ app.use('/api/clinical', clinicalRoutes);
 app.use('/api/labs', labRoutes);
 app.use('/api/pharmacy', pharmacyRoutes);
 app.use('/api/billing', billingRoutes);
+app.use('/api/payment', paymentRoutes);
+
 
 // Health check endpoint
 app.get('/', (req, res) => {

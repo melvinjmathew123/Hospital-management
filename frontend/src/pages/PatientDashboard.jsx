@@ -81,6 +81,135 @@ export default function PatientDashboard() {
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState({ text: '', type: '' });
 
+  // Payment integration state variables
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [selectedBillForPayment, setSelectedBillForPayment] = useState(null);
+  const [payAmount, setPayAmount] = useState('');
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  const openPaymentModal = (bill) => {
+    setSelectedBillForPayment(bill);
+    setPayAmount(bill.balanceAmount.toString());
+    setPaymentError('');
+    setPaymentSuccess(false);
+    setPaymentModalOpen(true);
+  };
+
+  const closePaymentModal = () => {
+    setPaymentModalOpen(false);
+    setSelectedBillForPayment(null);
+    setPayAmount('');
+    setPaymentError('');
+    setPaymentSuccess(false);
+  };
+
+  const handleRazorpayPayment = async (e) => {
+    e.preventDefault();
+    if (!selectedBillForPayment) return;
+    
+    const amountNum = Number(payAmount);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      setPaymentError('Please enter a valid payment amount.');
+      return;
+    }
+
+    if (amountNum > selectedBillForPayment.balanceAmount) {
+      setPaymentError(`Amount cannot exceed the outstanding balance of ₹${selectedBillForPayment.balanceAmount}.`);
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    setPaymentError('');
+
+    try {
+      // 1. Create Order on Backend
+      const orderRes = await fetch(`${API_URL}/payment/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          billId: selectedBillForPayment._id,
+          amount: amountNum
+        })
+      });
+
+      const orderData = await orderRes.json();
+      if (!orderData.success) {
+        throw new Error(orderData.message || 'Failed to create payment order');
+      }
+
+      // 2. Open Razorpay Checkout
+      const options = {
+        key: orderData.key_id || import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: orderData.amount * 100, // in paise
+        currency: orderData.currency || 'INR',
+        name: import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital',
+        description: `Payment for Invoice Ref: ${selectedBillForPayment._id.slice(-6)}`,
+        order_id: orderData.order_id,
+        handler: async function (response) {
+          try {
+            setIsProcessingPayment(true);
+            // 3. Verify Payment on Backend
+            const verifyRes = await fetch(`${API_URL}/payment/verify`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                billId: selectedBillForPayment._id,
+                amount: amountNum
+              })
+            });
+
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              setPaymentSuccess(true);
+              setIsProcessingPayment(false);
+              // Refresh bills list
+              await fetchPatientData();
+              setTimeout(() => {
+                closePaymentModal();
+              }, 2500);
+            } else {
+              setPaymentError(verifyData.message || 'Signature verification failed. Payment not recorded.');
+              setIsProcessingPayment(false);
+            }
+          } catch (err) {
+            setPaymentError('Connection error during payment verification.');
+            setIsProcessingPayment(false);
+          }
+        },
+        prefill: {
+          name: patientProfile?.name || user?.name || '',
+          email: patientProfile?.email || user?.email || '',
+          contact: patientProfile?.phone || ''
+        },
+        theme: {
+          color: '#06b6d4'
+        },
+        modal: {
+          ondismiss: function () {
+            setIsProcessingPayment(false);
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      setPaymentError(err.message || 'Error initiating payment transaction.');
+      setIsProcessingPayment(false);
+    }
+  };
+
   const fetchPatientData = async () => {
     try {
       setLoading(true);
@@ -554,40 +683,70 @@ export default function PatientDashboard() {
             {bills.map((bill) => {
               const badgeClass = bill.status === 'Paid' ? 'badge-success' : bill.status === 'Partially Paid' ? 'badge-warning' : 'badge-danger';
               return (
-                <div key={bill._id} className="glass-card">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }}>
-                    <span>Invoice Ref: {bill._id.slice(-6)}</span>
-                    <span className={`badge ${badgeClass}`}>{bill.status}</span>
-                  </div>
+                <div key={bill._id} className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }}>
+                      <span>Invoice Ref: {bill._id.slice(-6)}</span>
+                      <span className={`badge ${badgeClass}`}>{bill.status}</span>
+                    </div>
 
-                  <div style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
-                    {bill.services?.map((serv, i) => (
-                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.25rem 0' }}>
-                        <span>{serv.name}</span>
-                        <span>${serv.cost} x {serv.quantity || 1}</span>
+                    <div style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+                      {bill.services?.map((serv, i) => (
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.25rem 0' }}>
+                          <span>{serv.name}</span>
+                          <span>₹{serv.cost} x {serv.quantity || 1}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '0.75rem', fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Total Invoice cost:</span>
+                        <b>₹{bill.totalAmount}</b>
                       </div>
-                    ))}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-success)' }}>
+                        <span>Amount Cleared:</span>
+                        <b>-₹{bill.paidAmount}</b>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-danger)', fontWeight: 'bold' }}>
+                        <span>Outstanding Balance:</span>
+                        <b>₹{bill.balanceAmount}</b>
+                      </div>
+                    </div>
+
+                    {bill.payments && bill.payments.length > 0 && (
+                      <div style={{ marginTop: '1rem', borderTop: '1px dashed var(--glass-border)', paddingTop: '0.75rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>Payment History:</span>
+                        {bill.payments.map((p, pIdx) => (
+                          <div key={pIdx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', padding: '0.1rem 0' }}>
+                            <span style={{ color: 'var(--text-muted)' }}>{new Date(p.paymentDate).toLocaleDateString()} ({p.method})</span>
+                            <span style={{ fontWeight: 500, color: 'var(--color-success)' }}>+₹{p.amount}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {bill.insuranceDetails?.provider && (
+                      <div style={{ marginTop: '1rem', padding: '0.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '4px', fontSize: '0.75rem' }}>
+                        🛡️ Insurance: {bill.insuranceDetails.provider} ({bill.insuranceDetails.policyNumber}) • Claim: <b>{bill.insuranceDetails.claimStatus}</b>
+                      </div>
+                    )}
                   </div>
 
-                  <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '0.75rem', fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Total Invoice cost:</span>
-                      <b>${bill.totalAmount}</b>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-success)' }}>
-                      <span>Amount Cleared:</span>
-                      <b>-${bill.paidAmount}</b>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-danger)', fontWeight: 'bold' }}>
-                      <span>Outstanding Balance:</span>
-                      <b>${bill.balanceAmount}</b>
-                    </div>
-                  </div>
-
-                  {bill.insuranceDetails?.provider && (
-                    <div style={{ marginTop: '1rem', padding: '0.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '4px', fontSize: '0.75rem' }}>
-                      🛡️ Insurance: {bill.insuranceDetails.provider} ({bill.insuranceDetails.policyNumber}) • Claim: <b>{bill.insuranceDetails.claimStatus}</b>
-                    </div>
+                  {bill.balanceAmount > 0 && (
+                    <button
+                      onClick={() => openPaymentModal(bill)}
+                      className="btn btn-primary"
+                      style={{
+                        width: '100%',
+                        marginTop: '1.5rem',
+                        padding: '0.6rem',
+                        fontSize: '0.85rem',
+                        background: 'linear-gradient(135deg, #06b6d4, #3b82f6)'
+                      }}
+                    >
+                      💳 Pay Online Now
+                    </button>
                   )}
                 </div>
               );
@@ -596,6 +755,226 @@ export default function PatientDashboard() {
               <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>No active ledger statements found.</p>
             )}
           </div>
+
+          {/* Premium Razorpay Payment Modal */}
+          {paymentModalOpen && selectedBillForPayment && (
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(3, 7, 18, 0.85)',
+              backdropFilter: 'blur(12px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+              padding: '1.5rem'
+            }}>
+              <div className="glass-panel fade-in" style={{
+                maxWidth: '480px',
+                width: '100%',
+                padding: '2.5rem',
+                border: '1px solid rgba(255,255,255,0.08)',
+                boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                {/* Background Accent Gradients */}
+                <div style={{
+                  position: 'absolute',
+                  top: '-50px',
+                  right: '-50px',
+                  width: '150px',
+                  height: '150px',
+                  borderRadius: '50%',
+                  background: 'rgba(6, 182, 212, 0.15)',
+                  filter: 'blur(40px)',
+                  zIndex: 0
+                }}></div>
+                
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  {paymentSuccess ? (
+                    <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
+                      <div style={{
+                        width: '72px',
+                        height: '72px',
+                        borderRadius: '50%',
+                        background: 'rgba(16, 185, 129, 0.15)',
+                        border: '3px solid #10b981',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '2.5rem',
+                        color: '#10b981',
+                        margin: '0 auto 1.5rem auto',
+                        animation: 'spinSuccess 0.5s ease-out'
+                      }}>
+                        ✓
+                      </div>
+                      <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.5rem', color: '#34d399' }}>Payment Verified!</h3>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Thank you. Your transaction has been recorded, and the ledger has been successfully updated.</p>
+                      
+                      <style>{`
+                        @keyframes spinSuccess {
+                          0% { transform: scale(0.6) rotate(-45deg); opacity: 0; }
+                          100% { transform: scale(1) rotate(0); opacity: 1; }
+                        }
+                      `}</style>
+                    </div>
+                  ) : (
+                    <>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Secure Bill Payment</h3>
+                        <button
+                          onClick={closePaymentModal}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--text-muted)',
+                            fontSize: '1.5rem',
+                            cursor: 'pointer',
+                            padding: '0.2rem'
+                          }}
+                          disabled={isProcessingPayment}
+                        >
+                          &times;
+                        </button>
+                      </div>
+
+                      <div className="glass-card" style={{ padding: '1rem', marginBottom: '1.5rem', background: 'rgba(255, 255, 255, 0.01)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+                          <span style={{ color: 'var(--text-muted)' }}>Invoice Reference:</span>
+                          <b>#{selectedBillForPayment._id.slice(-6)}</b>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+                          <span style={{ color: 'var(--text-muted)' }}>Total Amount:</span>
+                          <span>₹{selectedBillForPayment.totalAmount}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+                          <span style={{ color: 'var(--text-muted)' }}>Amount Cleared:</span>
+                          <span style={{ color: 'var(--color-success)' }}>-₹{selectedBillForPayment.paidAmount}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 'bold', paddingTop: '0.5rem', borderTop: '1px solid var(--glass-border)' }}>
+                          <span>Outstanding Balance:</span>
+                          <span style={{ color: 'var(--color-danger)' }}>₹{selectedBillForPayment.balanceAmount}</span>
+                        </div>
+                      </div>
+
+                      {paymentError && (
+                        <div style={{
+                          background: 'rgba(239, 68, 68, 0.15)',
+                          border: '1px solid rgba(239, 68, 68, 0.3)',
+                          color: '#fca5a5',
+                          padding: '0.75rem 1rem',
+                          borderRadius: 'var(--radius-md)',
+                          marginBottom: '1.25rem',
+                          fontSize: '0.85rem',
+                          fontWeight: 500
+                        }}>
+                          ⚠️ {paymentError}
+                        </div>
+                      )}
+
+                      <form onSubmit={handleRazorpayPayment}>
+                        <div className="form-group">
+                          <label className="form-label" style={{ fontSize: '0.75rem' }}>Payment Type</label>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+                            <button
+                              type="button"
+                              onClick={() => setPayAmount(selectedBillForPayment.balanceAmount.toString())}
+                              style={{
+                                background: Number(payAmount) === selectedBillForPayment.balanceAmount ? 'rgba(6, 182, 212, 0.15)' : 'rgba(255,255,255,0.02)',
+                                border: `1px solid ${Number(payAmount) === selectedBillForPayment.balanceAmount ? 'var(--color-primary)' : 'var(--glass-border)'}`,
+                                color: Number(payAmount) === selectedBillForPayment.balanceAmount ? '#fff' : 'var(--text-muted)',
+                                padding: '0.6rem',
+                                borderRadius: 'var(--radius-md)',
+                                fontSize: '0.8rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                transition: 'var(--transition-smooth)'
+                              }}
+                              disabled={isProcessingPayment}
+                            >
+                              Full Balance
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setPayAmount('')}
+                              style={{
+                                background: Number(payAmount) !== selectedBillForPayment.balanceAmount ? 'rgba(6, 182, 212, 0.15)' : 'rgba(255,255,255,0.02)',
+                                border: `1px solid ${Number(payAmount) !== selectedBillForPayment.balanceAmount ? 'var(--color-primary)' : 'var(--glass-border)'}`,
+                                color: Number(payAmount) !== selectedBillForPayment.balanceAmount ? '#fff' : 'var(--text-muted)',
+                                padding: '0.6rem',
+                                borderRadius: 'var(--radius-md)',
+                                fontSize: '0.8rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                transition: 'var(--transition-smooth)'
+                              }}
+                              disabled={isProcessingPayment}
+                            >
+                              Custom Amount
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="form-group" style={{ marginBottom: '1.75rem' }}>
+                          <label className="form-label" style={{ fontSize: '0.75rem' }}>Enter Amount (₹)</label>
+                          <div style={{ position: 'relative' }}>
+                            <span style={{
+                              position: 'absolute',
+                              left: '1rem',
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              color: 'var(--text-muted)',
+                              fontWeight: 'bold'
+                            }}>₹</span>
+                            <input
+                              type="number"
+                              className="form-input"
+                              required
+                              min="1"
+                              max={selectedBillForPayment.balanceAmount}
+                              step="any"
+                              style={{ paddingLeft: '2rem', width: '100%' }}
+                              placeholder="0.00"
+                              value={payAmount}
+                              onChange={(e) => setPayAmount(e.target.value)}
+                              disabled={isProcessingPayment || Number(payAmount) === selectedBillForPayment.balanceAmount}
+                            />
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '1rem' }}>
+                          <button
+                            type="button"
+                            onClick={closePaymentModal}
+                            className="btn btn-secondary"
+                            disabled={isProcessingPayment}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="btn btn-primary"
+                            style={{
+                              background: 'linear-gradient(135deg, #06b6d4, #4f46e5)',
+                              boxShadow: '0 4px 15px rgba(6, 182, 212, 0.4)'
+                            }}
+                            disabled={isProcessingPayment}
+                          >
+                            {isProcessingPayment ? '⏳ Connecting...' : `💳 Pay ₹${payAmount || '0'}`}
+                          </button>
+                        </div>
+                      </form>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </DashboardLayout>
