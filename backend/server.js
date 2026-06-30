@@ -25,8 +25,26 @@ const app = express();
 // Body parser
 app.use(express.json());
 
-// Enable CORS
-app.use(cors());
+// Enable CORS — allow Vercel frontend + local development
+const allowedOrigins = [
+  'https://hospital-management-2q91.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (e.g. curl, Postman, mobile apps)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error(`CORS blocked: origin ${origin} not allowed`));
+    },
+    credentials: true,
+  })
+);
 
 // Mount routers
 app.use('/api/auth', authRoutes);
@@ -39,7 +57,6 @@ app.use('/api/pharmacy', pharmacyRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/payment', paymentRoutes);
 
-
 // Health check endpoint
 app.get('/', (req, res) => {
   res.send('Hospital Management System API is running...');
@@ -48,5 +65,5 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running in development mode on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
