@@ -17,9 +17,25 @@ dotenv.config();
 
 const seedData = async () => {
   try {
-    // Connect to database
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/hms');
-    console.log('MongoDB connected for seeding...');
+    const uri = process.env.MONGO_URI;
+
+    if (!uri) {
+      console.error('❌ Error: MONGO_URI is not defined in the environment variables.');
+      process.exit(1);
+    }
+
+    if (uri.includes('<username>') || uri.includes('<password>')) {
+      console.error('❌ Error: MONGO_URI contains placeholder values. Seeding requires a configured MongoDB Atlas URI.');
+      process.exit(1);
+    }
+
+    try {
+      await mongoose.connect(uri);
+      console.log(`MongoDB connected for seeding: ${mongoose.connection.host}`);
+    } catch (connError) {
+      console.error(`Error connecting to MongoDB Atlas: ${connError.message}`);
+      process.exit(1);
+    }
 
     // Clear all existing data
     await User.deleteMany();
@@ -47,7 +63,7 @@ const seedData = async () => {
 
     // 2. Create Users
     const users = [
-      { name: 'Super Admin User', email: 'admin@apollo.com', password: 'password123', role: 'Super Admin', phone: '123-456-7890' },
+      { name: 'Super Admin User', email: 'melvinjmathew171@gmail.com', password: 'password123', role: 'Super Admin', phone: '123-456-7890' },
       { name: 'Hospital Admin User', email: 'staff@apollo.com', password: 'password123', role: 'Hospital Admin', phone: '234-567-8901' },
       { name: 'Dr. John Smith', email: 'dr.smith@apollo.com', password: 'password123', role: 'Doctor', phone: '345-678-9012', department: 'Cardiology' },
       { name: 'Dr. Sarah Jones', email: 'dr.jones@apollo.com', password: 'password123', role: 'Doctor', phone: '456-789-0123', department: 'Pediatrics' },
