@@ -25,22 +25,33 @@ const app = express();
 // Body parser
 app.use(express.json());
 
-// Enable CORS — allow Vercel frontend + local development
+// Enable CORS — allow Vercel frontend (production + preview) + local development
 const allowedOrigins = [
-  'https://hospital-management-2q91.vercel.app',
+  'https://hospital-management-2q91.vercel.app', // production URL
   'http://localhost:5173',
   'http://localhost:5000',
   'http://localhost:3000',
 ];
+
+// Matches all Vercel preview deployment URLs for this project
+const vercelPreviewPattern = /^https:\/\/hospital-management-[\w-]+-melvin-j-mathew-s-projects\.vercel\.app$/;
 
 app.use(
   cors({
     origin: function (origin, callback) {
       // Allow requests with no origin (e.g. curl, Postman, mobile apps)
       if (!origin) return callback(null, true);
+
+      // Allow exact matches (production + localhost)
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
+
+      // Allow all Vercel preview deployment URLs for this project
+      if (vercelPreviewPattern.test(origin)) {
+        return callback(null, true);
+      }
+
       return callback(new Error(`CORS blocked: origin ${origin} not allowed`));
     },
     credentials: true,
