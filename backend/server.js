@@ -29,6 +29,7 @@ app.use(express.json());
 const allowedOrigins = [
   'https://hospital-management-2q91.vercel.app',
   'http://localhost:5173',
+  'http://localhost:5000',
   'http://localhost:3000',
 ];
 
