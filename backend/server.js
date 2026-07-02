@@ -27,14 +27,15 @@ app.use(express.json());
 
 // Enable CORS — allow Vercel frontend (production + preview) + local development
 const allowedOrigins = [
-  'https://hospital-management-2q91.vercel.app', // production URL
+  'https://hospital-management-wk23.vercel.app', // production URL
+  'https://hospital-management-2q91.vercel.app', // previous production URL
   'http://localhost:5173',
   'http://localhost:5000',
   'http://localhost:3000',
 ];
 
-// Matches all Vercel preview deployment URLs for this project
-const vercelPreviewPattern = /^https:\/\/hospital-management-[\w-]+-melvin-j-mathew-s-projects\.vercel\.app$/;
+// Matches ALL Vercel deployment URLs for this project (previews + production)
+const vercelPreviewPattern = /^https:\/\/hospital-management-[\w-]+\.vercel\.app$/;
 
 app.use(
   cors({
