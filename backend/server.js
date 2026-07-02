@@ -25,34 +25,38 @@ const app = express();
 // Body parser
 app.use(express.json());
 
-// Enable CORS — allow Vercel frontend (production + preview) + local development
-const allowedOrigins = [
-  'https://hospital-management-wk23.vercel.app', // production URL
-  'https://hospital-management-2q91.vercel.app', // previous production URL
+// Enable CORS
+// CLIENT_URL env var = comma-separated list of extra allowed origins (set on Render)
+const hardcodedOrigins = [
+  'https://hospital-management-wk23.vercel.app',
+  'https://hospital-management-2q91.vercel.app',
   'http://localhost:5173',
   'http://localhost:5000',
   'http://localhost:3000',
 ];
 
-// Matches ALL Vercel deployment URLs for this project (previews + production)
-const vercelPreviewPattern = /^https:\/\/hospital-management-[\w-]+\.vercel\.app$/;
+const envOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((o) => o.trim())
+  : [];
+
+const allowedOrigins = [...new Set([...hardcodedOrigins, ...envOrigins])];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (e.g. curl, Postman, mobile apps)
+      // Allow no-origin requests (curl, Postman, mobile)
       if (!origin) return callback(null, true);
 
-      // Allow exact matches (production + localhost)
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+      // Allow exact-match origins
+      if (allowedOrigins.includes(origin)) return callback(null, true);
 
-      // Allow all Vercel preview deployment URLs for this project
-      if (vercelPreviewPattern.test(origin)) {
-        return callback(null, true);
-      }
+      // Allow ANY *.vercel.app preview URL
+      if (/^https:\/\/[\w-]+\.vercel\.app$/.test(origin)) return callback(null, true);
 
+      // Allow localhost on any port
+      if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return callback(null, true);
+
+      console.warn(`CORS blocked: ${origin}`);
       return callback(new Error(`CORS blocked: origin ${origin} not allowed`));
     },
     credentials: true,
