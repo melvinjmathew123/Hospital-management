@@ -5,6 +5,8 @@ export default function ForgotPassword({ setView }) {
   const [step, setStep] = useState(1); // 1: Email Request, 2: Verification, 3: Reset
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
+  const [fallbackOtp, setFallbackOtp] = useState('');
+
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -31,17 +33,14 @@ export default function ForgotPassword({ setView }) {
       const data = await res.json();
 
       if (data.success) {
-        setSuccess('Verification code generated! Please check your inbox.');
-        
-        // Auto-fill OTP if returned in response payload (silently kept for local testing)
         if (data.otp) {
           setOtp(data.otp);
+          setFallbackOtp(data.otp);
+          setSuccess('OTP generated — email unavailable, code shown on next screen.');
+        } else {
+          setSuccess('Verification code sent! Please check your inbox.');
         }
-
-        setTimeout(() => {
-          setSuccess('');
-          setStep(2);
-        }, 2000);
+        setTimeout(() => { setSuccess(''); setStep(2); }, 2000);
       } else {
         setError(data.message || 'Email lookup failed.');
       }
@@ -66,7 +65,7 @@ export default function ForgotPassword({ setView }) {
       const res = await fetch(`${API_URL}/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp })
+        body: JSON.stringify({ email, otp: otp.trim() })
       });
       const data = await res.json();
 
@@ -104,7 +103,7 @@ export default function ForgotPassword({ setView }) {
       const res = await fetch(`${API_URL}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp, newPassword })
+        body: JSON.stringify({ email, otp: otp.trim(), newPassword })
       });
       const data = await res.json();
 
@@ -240,8 +239,27 @@ export default function ForgotPassword({ setView }) {
         {step === 2 && (
           <form onSubmit={handleVerifyOtp} className="fade-in">
             <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-              Please enter the 6-digit verification code sent to your registered email address.
+              {fallbackOtp
+                ? 'Email delivery is unavailable. Your OTP is displayed below — copy it into the field and click Verify.'
+                : 'Enter the 6-digit verification code sent to your registered email address.'}
             </p>
+
+            {/* Fallback OTP banner */}
+            {fallbackOtp && (
+              <div style={{
+                background: 'rgba(99,102,241,0.12)',
+                border: '2px dashed rgba(99,102,241,0.45)',
+                borderRadius: 'var(--radius-md)',
+                padding: '1rem',
+                textAlign: 'center',
+                marginBottom: '1.25rem'
+              }}>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0 0 0.35rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Your Reset OTP</p>
+                <p style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '0.3em', color: '#818cf8', margin: 0 }}>{fallbackOtp}</p>
+                <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', margin: '0.35rem 0 0' }}>⏱ Expires in 15 minutes</p>
+              </div>
+            )}
+
             <div className="form-group">
               <label className="form-label">6-Digit Verification OTP</label>
               <input
@@ -266,7 +284,7 @@ export default function ForgotPassword({ setView }) {
             </button>
             <button
               type="button"
-              onClick={() => setStep(1)}
+              onClick={() => { setStep(1); setFallbackOtp(''); }}
               className="btn btn-secondary"
               style={{ width: '100%', padding: '0.85rem', marginTop: '0.75rem' }}
               disabled={loading}

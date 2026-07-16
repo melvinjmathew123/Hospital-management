@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { API_URL, useAuth } from '../context/AuthContext';
 
 export default function SignUp({ setView }) {
-  const { verifyRegistration } = useAuth();
+  const { verifyRegistration, resendOtp } = useAuth();
   const [step, setStep] = useState(1); // 1: Form entry, 2: OTP verification
   const [otp, setOtp] = useState('');
+
+  const [fallbackOtp, setFallbackOtp] = useState(''); // shown when email delivery fails
   const [role, setRole] = useState('Patient');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -65,19 +67,21 @@ export default function SignUp({ setView }) {
 
       if (data.success) {
         if (data.isVerified === false) {
-          setSuccess('Account registered successfully! Verification OTP code generated.');
+          // If email delivery failed, backend returns the OTP directly
           if (data.otp) {
             setOtp(data.otp);
+            setFallbackOtp(data.otp);
           }
+          setSuccess(data.otp
+            ? '✅ Account created! Email delivery is unavailable — your OTP is shown below.'
+            : '✅ Account created! Check your email for the 6-digit verification code.');
           setTimeout(() => {
             setSuccess('');
             setStep(2);
-          }, 1500);
+          }, 2000);
         } else {
           setSuccess('🎉 Account registered successfully! Redirecting to login...');
-          setTimeout(() => {
-            setView('login');
-          }, 2500);
+          setTimeout(() => setView('login'), 2500);
         }
       } else {
         setError(data.message || 'Registration failed.');
@@ -100,7 +104,7 @@ export default function SignUp({ setView }) {
     setLoading(true);
 
     try {
-      const res = await verifyRegistration(email, otp);
+    const res = await verifyRegistration(email, otp.trim());
       if (res.success) {
         setSuccess('🎉 Registration verified successfully! Accessing portal...');
       } else {
@@ -112,6 +116,32 @@ export default function SignUp({ setView }) {
       setLoading(false);
     }
   };
+
+  const handleResendOtp = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const data = await resendOtp(email);
+      if (data.success) {
+        if (data.otp) {
+          setOtp(data.otp);
+          setFallbackOtp(data.otp);
+          setSuccess('New OTP generated — email unavailable, code shown below.');
+        } else {
+          setFallbackOtp('');
+          setSuccess('A new verification code has been sent to your email.');
+        }
+        setTimeout(() => setSuccess(''), 3500);
+      } else {
+        setError(data.message || 'Failed to resend OTP.');
+      }
+    } catch (err) {
+      setError('Server connection error.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <div style={{
@@ -343,10 +373,29 @@ export default function SignUp({ setView }) {
         {step === 2 && (
           <form onSubmit={handleVerifyRegistration} className="fade-in">
             <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-              Account successfully registered! Please enter the 6-digit verification code sent to your registered email address to authorize and activate your portal workspace.
+              {fallbackOtp
+                ? 'Email delivery is currently unavailable. Your OTP is displayed below — copy it into the field and click Verify.'
+                : 'Account successfully registered! Enter the 6-digit code sent to your email to activate your portal.'}
             </p>
+
+            {/* Fallback OTP banner */}
+            {fallbackOtp && (
+              <div style={{
+                background: 'rgba(99,102,241,0.12)',
+                border: '2px dashed rgba(99,102,241,0.45)',
+                borderRadius: 'var(--radius-md)',
+                padding: '1rem',
+                textAlign: 'center',
+                marginBottom: '1.25rem'
+              }}>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0 0 0.35rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Your Verification OTP</p>
+                <p style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '0.3em', color: '#818cf8', margin: 0 }}>{fallbackOtp}</p>
+                <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', margin: '0.35rem 0 0' }}>⏱ Expires in 15 minutes</p>
+              </div>
+            )}
+
             <div className="form-group">
-              <label className="form-label">6-Digit Verification OTP</label>
+              <label className="form-label">6-Digit Verification Code</label>
               <input
                 type="text"
                 className="form-input"
@@ -369,12 +418,21 @@ export default function SignUp({ setView }) {
             </button>
             <button
               type="button"
-              onClick={() => setStep(1)}
+              onClick={handleResendOtp}
               className="btn btn-secondary"
-              style={{ width: '100%', padding: '0.85rem', marginTop: '0.75rem' }}
+              style={{ width: '100%', padding: '0.75rem', marginTop: '0.6rem', fontSize: '0.88rem' }}
               disabled={loading}
             >
-              Back
+              Resend Code
+            </button>
+            <button
+              type="button"
+              onClick={() => { setStep(1); setFallbackOtp(''); setOtp(''); }}
+              className="btn btn-secondary"
+              style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem', fontSize: '0.85rem' }}
+              disabled={loading}
+            >
+              ← Back
             </button>
           </form>
         )}

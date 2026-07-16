@@ -50,9 +50,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
       const data = await res.json();
@@ -64,13 +62,27 @@ export const AuthProvider = ({ children }) => {
         return { success: true };
       } else {
         setError(data.message || 'Login failed');
-        return { success: false, message: data.message };
+        return { success: false, message: data.message, isVerified: data.isVerified, otp: data.otp };
       }
     } catch (err) {
       setError('Connection error, backend server might be offline');
       return { success: false, message: 'Server is offline' };
     } finally {
       setLoading(false);
+    }
+  };
+
+  const resendOtp = async (email) => {
+    try {
+      const res = await fetch(`${API_URL}/auth/resend-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      return data; // { success, otp?, message }
+    } catch (err) {
+      return { success: false, message: 'Server is offline' };
     }
   };
 
@@ -111,7 +123,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, error, login, logout, setUser, verifyRegistration }}>
+    <AuthContext.Provider value={{ user, token, loading, error, login, logout, setUser, verifyRegistration, resendOtp }}>
       {children}
     </AuthContext.Provider>
   );
