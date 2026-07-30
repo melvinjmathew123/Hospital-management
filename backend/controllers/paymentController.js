@@ -32,10 +32,30 @@ exports.createOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Payment amount exceeds outstanding balance' });
     }
 
-    if (!razorpay || process.env.RAZORPAY_KEY_ID === 'dummy_key') {
+    const isDummy = !process.env.RAZORPAY_KEY_ID || 
+                    process.env.RAZORPAY_KEY_ID === 'dummy_key' || 
+                    process.env.RAZORPAY_KEY_SECRET === 'dummy_secret' || 
+                    process.env.RAZORPAY_KEY_SECRET === 'xyzABC123secret';
+
+    if (isDummy) {
+      const orderId = `mock_order_${Math.random().toString(36).substring(2, 11)}`;
+      bill.razorpayOrderId = orderId;
+      await bill.save();
+
+      return res.json({
+        success: true,
+        order_id: orderId,
+        amount: paymentAmount,
+        currency: 'INR',
+        key_id: 'rzp_test_dummy',
+        is_simulated: true,
+      });
+    }
+
+    if (!razorpay) {
       return res.status(500).json({
         success: false,
-        message: 'Razorpay keys are not configured or initialized properly on the server.',
+        message: 'Razorpay SDK is not initialized properly on the server.',
       });
     }
 
@@ -70,24 +90,32 @@ exports.createOrder = async (req, res) => {
 exports.verifyPayment = async (req, res) => {
   const { razorpay_payment_id, razorpay_order_id, razorpay_signature, billId, amount } = req.body;
   try {
-    // Verify cryptographic signature
-    const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || 'dummy_secret');
-    hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-    const generatedSignature = hmac.digest('hex');
+    const isMock = (razorpay_order_id && razorpay_order_id.startsWith('mock_order_')) || 
+                   (razorpay_payment_id && razorpay_payment_id.startsWith('pay_mock_'));
 
-    if (generatedSignature !== razorpay_signature) {
-      return res.status(400).json({ success: false, message: 'Transaction verification signature mismatch' });
+    if (!isMock) {
+      // Verify cryptographic signature
+      const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || 'dummy_secret');
+      hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+      const generatedSignature = hmac.digest('hex');
+
+      if (generatedSignature !== razorpay_signature) {
+        return res.status(400).json({ success: false, message: 'Transaction verification signature mismatch' });
+      }
     }
 
     const bill = await Billing.findById(billId);
     if (!bill) return res.status(404).json({ success: false, message: 'Matching bill not found' });
 
+    const paymentAmount = Number(amount);
     bill.payments.push({
-      amount: Number(amount),
+      amount: paymentAmount,
       method: 'Online',
-      remarks: `Razorpay Payment ID: ${razorpay_payment_id}`,
+      remarks: isMock 
+        ? `Simulated Online Payment ID: ${razorpay_payment_id}` 
+        : `Razorpay Payment ID: ${razorpay_payment_id}`,
     });
-    bill.paidAmount += Number(amount);
+    bill.paidAmount += paymentAmount;
     bill.razorpayOrderId = null;
     await bill.save();
 
