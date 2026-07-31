@@ -1,74 +1,29 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useEffect, useContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser, logout, verifyEmailOtp, fetchCurrentUser, clearAuthError, API_URL } from '../store/slices/authSlice';
+
+export { API_URL } from '../store/slices/authSlice';
 
 const AuthContext = createContext();
 
-export const API_URL = import.meta.env.VITE_API_URL || 'https://apollo-hms-backend.onrender.com/api';
-
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { user, token, loading, error } = useSelector(state => state.auth);
 
-  // Fetch current user details if token exists
+  // On mount (or token change), hydrate user from server
   useEffect(() => {
-    const fetchUser = async () => {
-      if (!token) {
-        setUser(null);
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const res = await fetch(`${API_URL}/auth/me`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-          setUser(data.user);
-        } else {
-          // Token is expired or invalid
-          logout();
-        }
-      } catch (err) {
-        console.error('Failed to load user profile', err);
-        setError('Network error, please try again later');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [token]);
+    if (token) {
+      dispatch(fetchCurrentUser());
+    }
+  }, [token, dispatch]);
 
   const login = async (email, password) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        localStorage.setItem('token', data.token);
-        setToken(data.token);
-        setUser(data.user);
-        return { success: true };
-      } else {
-        setError(data.message || 'Login failed');
-        return { success: false, message: data.message, isVerified: data.isVerified, otp: data.otp };
-      }
-    } catch (err) {
-      setError('Connection error, backend server might be offline');
-      return { success: false, message: 'Server is offline' };
-    } finally {
-      setLoading(false);
+    const result = await dispatch(loginUser({ email, password }));
+    if (loginUser.fulfilled.match(result)) {
+      return { success: true };
+    } else {
+      const payload = result.payload;
+      return { success: false, message: payload?.message, isVerified: payload?.isVerified, otp: payload?.otp };
     }
   };
 
@@ -79,51 +34,38 @@ export const AuthProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
-      const data = await res.json();
-      return data; // { success, otp?, message }
-    } catch (err) {
+      return await res.json();
+    } catch {
       return { success: false, message: 'Server is offline' };
     }
   };
 
   const verifyRegistration = async (email, otp) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`${API_URL}/auth/verify-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, otp })
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        localStorage.setItem('token', data.token);
-        setToken(data.token);
-        setUser(data.user);
-        return { success: true };
-      } else {
-        setError(data.message || 'Verification failed');
-        return { success: false, message: data.message };
-      }
-    } catch (err) {
-      setError('Connection error, backend server might be offline');
-      return { success: false, message: 'Server is offline' };
-    } finally {
-      setLoading(false);
+    const result = await dispatch(verifyEmailOtp({ email, otp }));
+    if (verifyEmailOtp.fulfilled.match(result)) {
+      return { success: true };
+    } else {
+      return { success: false, message: result.payload?.message };
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setToken('');
-    setUser(null);
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
+  const handleClearError = () => {
+    dispatch(clearAuthError());
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, error, login, logout, setUser, verifyRegistration, resendOtp }}>
+    <AuthContext.Provider value={{
+      user, token, loading, error,
+      login,
+      logout: handleLogout,
+      resendOtp,
+      verifyRegistration,
+      clearError: handleClearError,
+    }}>
       {children}
     </AuthContext.Provider>
   );
