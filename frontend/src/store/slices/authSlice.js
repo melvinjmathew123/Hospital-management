@@ -68,12 +68,16 @@ export const verifyEmailOtp = createAsyncThunk(
   }
 );
 
+const storedToken = localStorage.getItem('token') || '';
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
     user: null,
-    token: localStorage.getItem('token') || '',
-    loading: true,
+    token: storedToken,
+    // If a token exists, we need to verify it with the server → show loading.
+    // If there's no token, user is a guest → no need to wait.
+    loading: !!storedToken,
     error: null,
   },
   reducers: {
