@@ -9,7 +9,7 @@ export default function PatientAppointments({ appointments }) {
           <thead>
             <tr>
               <th>Date</th>
-              <th>Time Slot</th>
+              <th>Time Slot &amp; Token</th>
               <th>Attending Doctor</th>
               <th>Location / Department</th>
               <th>Type</th>
@@ -22,7 +22,21 @@ export default function PatientAppointments({ appointments }) {
               return (
                 <tr key={appt._id}>
                   <td><b>{new Date(appt.date).toLocaleDateString()}</b></td>
-                  <td>{appt.timeSlot}</td>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span className="badge badge-info">{appt.timeSlot}</span>
+                      <span style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        padding: '0.1rem 0.4rem',
+                        borderRadius: '4px',
+                        background: 'rgba(99, 102, 241, 0.15)',
+                        color: '#818cf8'
+                      }}>
+                        Token #{appt.slotNumber || 1}
+                      </span>
+                    </div>
+                  </td>
                   <td>{appt.doctor?.name}</td>
                   <td>{appt.doctor?.department || 'Outpatient Clinic'}</td>
                   <td><span className="badge badge-info">{appt.type}</span></td>

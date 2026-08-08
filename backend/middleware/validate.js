@@ -370,7 +370,9 @@ const validateCreatePaymentOrder = [
 const validateVerifyPayment = [
   body('razorpay_payment_id').notEmpty().withMessage('Razorpay payment ID is required'),
   body('razorpay_order_id').notEmpty().withMessage('Razorpay order ID is required'),
-  body('razorpay_signature').notEmpty().withMessage('Razorpay signature is required'),
+  // Signature is optional at the middleware level — simulation payments (mock_order_*) skip
+  // cryptographic verification in the controller itself.
+  body('razorpay_signature').optional({ checkFalsy: true }).isString(),
   body('billId').notEmpty().withMessage('Bill ID is required').isMongoId().withMessage('Invalid bill ID'),
   body('amount').notEmpty().withMessage('Amount is required').isFloat({ min: 0.01 }).withMessage('Amount must be greater than 0'),
   handleValidation,

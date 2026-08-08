@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './shared/NotificationBell';
 
 export default function DashboardLayout({ sidebarItems, activeTab, setActiveTab, children }) {
   const { user, logout } = useAuth();
@@ -208,9 +209,7 @@ export default function DashboardLayout({ sidebarItems, activeTab, setActiveTab,
                 🏥 Dept: <span style={{ color: 'var(--color-primary)' }}>{user.department}</span>
               </div>
             )}
-            <div className="glass-panel" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius-md)', fontSize: '1.2rem', cursor: 'pointer' }}>
-              🔔
-            </div>
+            <NotificationBell />
           </div>
         </header>
 

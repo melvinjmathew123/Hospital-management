@@ -152,4 +152,85 @@ const sendOtpEmail = async (to, otp, purpose = 'register') => {
   }
 };
 
-module.exports = { sendOtpEmail };
+
+/**
+ * Sends a generic notification email (appointment booked, lab result ready, etc.)
+ *
+ * @param {string} to       - recipient email
+ * @param {string} subject  - email subject line
+ * @param {string} title    - card heading
+ * @param {string} message  - body paragraph
+ * @param {string} [icon]   - emoji icon shown in the header (default 🏥)
+ */
+const sendNotificationEmail = async (to, subject, title, message, icon = '🏥') => {
+  const hospitalName = process.env.HOSPITAL_NAME || 'Apollo Hospital';
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${subject}</title>
+  <style>
+    body { margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #e2e8f0; }
+    .wrapper { max-width: 560px; margin: 40px auto; padding: 0 16px; }
+    .card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(99,102,241,0.25); border-radius: 16px; overflow: hidden; }
+    .header { background: linear-gradient(135deg, #06b6d4, #6366f1); padding: 28px 32px; text-align: center; }
+    .header .icon { font-size: 48px; display: block; margin-bottom: 10px; }
+    .header h1 { margin: 0; font-size: 20px; font-weight: 700; color: #fff; }
+    .header p  { margin: 6px 0 0; font-size: 13px; color: rgba(255,255,255,0.8); }
+    .body { padding: 36px 32px; }
+    .body h2 { margin: 0 0 12px; font-size: 18px; font-weight: 700; color: #f1f5f9; }
+    .body p  { margin: 0 0 24px; font-size: 14px; color: #94a3b8; line-height: 1.7; }
+    .divider { height: 1px; background: rgba(255,255,255,0.06); margin: 0 32px; }
+    .footer { padding: 20px 32px; text-align: center; font-size: 12px; color: #475569; }
+    .footer a { color: #6366f1; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <div class="header">
+        <span class="icon">${icon}</span>
+        <h1>${hospitalName}</h1>
+        <p>Hospital Management System — Notification</p>
+      </div>
+      <div class="body">
+        <h2>${title}</h2>
+        <p>${message}</p>
+        <p style="font-size:12px;color:#64748b;">This is an automated notification from ${hospitalName}. Please do not reply to this email.</p>
+      </div>
+      <div class="divider"></div>
+      <div class="footer">
+        &copy; ${new Date().getFullYear()} ${hospitalName}. All rights reserved.<br/>
+        Questions? <a href="mailto:${process.env.EMAIL_USER}">Contact Support</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const transporter = createTransporter();
+  if (!transporter) {
+    console.log(`[Mailer-DEV] Notification email to ${to} | Subject: ${subject}`);
+    return { dev: true };
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"${hospitalName}" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html,
+    });
+    console.log(`[Mailer] Notification email sent to ${to} — MessageId: ${info.messageId}`);
+    return info;
+  } catch (err) {
+    console.error(`[Mailer] Failed to send notification to ${to}: ${err.message}`);
+    return { fallback: true, error: err.message };
+  }
+};
+
+module.exports = { sendOtpEmail, sendNotificationEmail };
+
