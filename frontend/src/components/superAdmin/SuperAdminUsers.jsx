@@ -142,9 +142,10 @@ export default function SuperAdminUsers({ users, token, onRefresh, showMsg }) {
                       className="btn"
                       style={{
                         padding: '0.25rem 0.5rem', fontSize: '0.75rem',
-                        background: u.status === 'Active' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-                        color: u.status === 'Active' ? '#fca5a5' : '#34d399',
-                        border: 'none'
+                        background: u.status === 'Active' ? '#fef2f2' : '#f0fdf4',
+                        color: u.status === 'Active' ? '#b91c1c' : '#15803d',
+                        border: u.status === 'Active' ? '1px solid #fecaca' : '1px solid #bbf7d0',
+                        borderRadius: '6px'
                       }}
                     >
                       {u.status === 'Active' ? 'Deactivate' : 'Activate'}

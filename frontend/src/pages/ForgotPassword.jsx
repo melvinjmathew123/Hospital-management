@@ -36,16 +36,16 @@ export default function ForgotPassword({ setView }) {
         if (data.otp) {
           setOtp(data.otp);
           setFallbackOtp(data.otp);
-          setSuccess('OTP generated — email unavailable, code shown on next screen.');
+          setSuccess('Code generated. Since email delivery is unavailable, your code is displayed on the next screen.');
         } else {
-          setSuccess('Verification code sent! Please check your inbox.');
+          setSuccess('Verification code sent. Please check your email inbox.');
         }
-        setTimeout(() => { setSuccess(''); setStep(2); }, 2000);
+        setTimeout(() => { setSuccess(''); setStep(2); }, 1500);
       } else {
-        setError(data.message || 'Email lookup failed.');
+        setError(data.message || 'We could not find an account with that email.');
       }
-    } catch (err) {
-      setError('Server connection error. Please try again.');
+    } catch {
+      setError('Could not connect to the server. Please check your internet connection.');
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ export default function ForgotPassword({ setView }) {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     if (!otp) {
-      setError('Please enter the verification code.');
+      setError('Please enter the 6-digit verification code.');
       return;
     }
     setError('');
@@ -70,16 +70,16 @@ export default function ForgotPassword({ setView }) {
       const data = await res.json();
 
       if (data.success) {
-        setSuccess('Verification code verified successfully! Set your new security credentials.');
+        setSuccess('Code verified successfully. Please enter your new password.');
         setTimeout(() => {
           setSuccess('');
           setStep(3);
-        }, 1500);
+        }, 1200);
       } else {
         setError(data.message || 'Invalid or expired verification code.');
       }
-    } catch (err) {
-      setError('Server connection error. Please try again.');
+    } catch {
+      setError('Could not connect to the server. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -89,11 +89,11 @@ export default function ForgotPassword({ setView }) {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     if (!newPassword || !confirmPassword) {
-      setError('Please complete all security credential fields.');
+      setError('Please fill in both password fields.');
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError('Passwords do not match. Please re-enter them.');
       return;
     }
     setError('');
@@ -108,15 +108,15 @@ export default function ForgotPassword({ setView }) {
       const data = await res.json();
 
       if (data.success) {
-        setSuccess('🎉 Password reset successfully! Redirecting to login...');
+        setSuccess('Password updated successfully! Redirecting to sign in...');
         setTimeout(() => {
           setView('login');
-        }, 2000);
+        }, 1800);
       } else {
-        setError(data.message || 'Failed to reset password.');
+        setError(data.message || 'Failed to update password.');
       }
-    } catch (err) {
-      setError('Server connection error. Please try again.');
+    } catch {
+      setError('Could not connect to the server. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -130,77 +130,100 @@ export default function ForgotPassword({ setView }) {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '2rem 1rem',
-      background: 'radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 45%)'
+      backgroundColor: '#f8fafc',
     }}>
-      <div className="glass-panel fade-in" style={{
+      <div style={{
         width: '100%',
-        maxWidth: '460px',
-        padding: '3rem 2.5rem',
+        maxWidth: '440px',
+        padding: '2.5rem 2rem',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 'var(--radius-lg)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
       }}>
-        {/* Step Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            borderRadius: '10px',
+            background: 'var(--color-primary)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.5rem',
+            color: '#ffffff',
+            fontWeight: 700,
+            marginBottom: '1rem',
+          }}>+</div>
           <h1 style={{
-            fontSize: '1.8rem',
-            fontWeight: 800,
-            background: 'linear-gradient(135deg, #22d3ee, #6366f1)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            marginBottom: '0.25rem'
-          }}>Reset Credentials</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-            Apollo Care Network Secure Reset Wizard
+            fontSize: '1.45rem',
+            fontWeight: 700,
+            color: '#0f172a',
+            marginBottom: '0.35rem',
+            letterSpacing: '-0.02em'
+          }}>Reset your password</h1>
+          <p style={{ color: '#64748b', fontSize: '0.88rem' }}>
+            Follow the steps to recover access to your account
           </p>
         </div>
 
         {/* Wizard Progress Indicator */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginBottom: '1.75rem' }}>
           {[1, 2, 3].map((s) => (
             <div key={s} style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{
                 width: '28px',
                 height: '28px',
                 borderRadius: '50%',
-                background: step === s ? 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))' : step > s ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.05)',
-                border: step === s ? 'none' : step > s ? '1px solid #10b981' : '1px solid var(--glass-border)',
-                color: step >= s ? '#fff' : 'var(--text-muted)',
+                background: step === s ? 'var(--color-primary)' : step > s ? '#10b981' : '#f1f5f9',
+                border: step === s ? 'none' : step > s ? '1px solid #10b981' : '1px solid #cbd5e1',
+                color: step >= s ? '#ffffff' : '#64748b',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '0.75rem',
-                fontWeight: 700
+                fontSize: '0.78rem',
+                fontWeight: 600
               }}>
                 {step > s ? '✓' : s}
               </div>
-              {s < 3 && <div style={{ width: '40px', height: '2px', background: step > s ? '#10b981' : 'var(--glass-border)', marginLeft: '0.75rem' }} />}
+              {s < 3 && (
+                <div style={{
+                  width: '36px',
+                  height: '2px',
+                  background: step > s ? '#10b981' : '#e2e8f0',
+                  marginLeft: '0.75rem'
+                }} />
+              )}
             </div>
           ))}
         </div>
 
         {error && (
           <div style={{
-            background: 'rgba(239, 68, 68, 0.12)',
-            border: '1px solid rgba(239, 68, 68, 0.25)',
-            borderRadius: 'var(--radius-md)',
-            color: '#fca5a5',
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: 'var(--radius-sm)',
+            color: '#b91c1c',
             padding: '0.75rem 1rem',
             fontSize: '0.88rem',
             marginBottom: '1.25rem',
-            textAlign: 'center'
+            fontWeight: 500
           }}>
-            ⚠️ {error}
+            {error}
           </div>
         )}
 
         {success && (
           <div style={{
-            background: 'rgba(16, 185, 129, 0.12)',
-            border: '1px solid rgba(16, 185, 129, 0.25)',
-            borderRadius: 'var(--radius-md)',
-            color: '#34d399',
+            background: '#f0fdf4',
+            border: '1px solid #bbf7d0',
+            borderRadius: 'var(--radius-sm)',
+            color: '#15803d',
             padding: '0.75rem 1rem',
             fontSize: '0.88rem',
             marginBottom: '1.25rem',
-            textAlign: 'center'
+            fontWeight: 500
           }}>
             {success}
           </div>
@@ -209,16 +232,16 @@ export default function ForgotPassword({ setView }) {
         {/* Step 1: Request Form */}
         {step === 1 && (
           <form onSubmit={handleRequestOtp} className="fade-in">
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-              Enter your registered portal email address. We will generate a secure OTP code to authorize your reset.
+            <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: 1.5, marginBottom: '1.25rem' }}>
+              Enter the email address associated with your account and we will send a 6-digit verification code.
             </p>
             <div className="form-group">
-              <label className="form-label">Portal Email Address</label>
+              <label className="form-label">Email address</label>
               <input
                 type="email"
                 className="form-input"
                 required
-                placeholder="e.g. patient@apollo.com"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
@@ -227,10 +250,10 @@ export default function ForgotPassword({ setView }) {
             <button
               type="submit"
               className="btn btn-primary"
-              style={{ width: '100%', padding: '0.85rem', marginTop: '0.5rem' }}
+              style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem', fontSize: '0.92rem' }}
               disabled={loading}
             >
-              {loading ? 'Processing...' : 'Send Verification OTP'}
+              {loading ? 'Sending code...' : 'Send verification code'}
             </button>
           </form>
         )}
@@ -238,37 +261,42 @@ export default function ForgotPassword({ setView }) {
         {/* Step 2: Verification Form */}
         {step === 2 && (
           <form onSubmit={handleVerifyOtp} className="fade-in">
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+            <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: 1.5, marginBottom: '1.25rem' }}>
               {fallbackOtp
-                ? 'Email delivery is unavailable. Your OTP is displayed below — copy it into the field and click Verify.'
-                : 'Enter the 6-digit verification code sent to your registered email address.'}
+                ? 'Email delivery is unavailable. Your verification code is provided below.'
+                : 'Enter the 6-digit verification code sent to your email.'}
             </p>
 
             {/* Fallback OTP banner */}
             {fallbackOtp && (
               <div style={{
-                background: 'rgba(99,102,241,0.12)',
-                border: '2px dashed rgba(99,102,241,0.45)',
+                background: '#fffbeb',
+                border: '1px solid #fde68a',
                 borderRadius: 'var(--radius-md)',
                 padding: '1rem',
                 textAlign: 'center',
                 marginBottom: '1.25rem'
               }}>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0 0 0.35rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Your Reset OTP</p>
-                <p style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '0.3em', color: '#818cf8', margin: 0 }}>{fallbackOtp}</p>
-                <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', margin: '0.35rem 0 0' }}>⏱ Expires in 15 minutes</p>
+                <p style={{ fontSize: '0.72rem', color: '#b45309', margin: '0 0 0.35rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Your Verification Code</p>
+                <p style={{ fontSize: '1.8rem', fontWeight: 700, letterSpacing: '0.25em', color: '#0f172a', margin: 0 }}>{fallbackOtp}</p>
+                <p style={{ fontSize: '0.75rem', color: '#92400e', margin: '0.35rem 0 0' }}>Valid for 15 minutes</p>
               </div>
             )}
 
             <div className="form-group">
-              <label className="form-label">6-Digit Verification OTP</label>
+              <label className="form-label">6-digit code</label>
               <input
                 type="text"
                 className="form-input"
                 required
                 maxLength={6}
                 placeholder="123456"
-                style={{ textAlign: 'center', letterSpacing: '0.25em', fontSize: '1.25rem', fontWeight: 'bold' }}
+                style={{
+                  textAlign: 'center',
+                  letterSpacing: '0.3em',
+                  fontSize: '1.3rem',
+                  fontWeight: 600
+                }}
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
                 disabled={loading}
@@ -277,19 +305,19 @@ export default function ForgotPassword({ setView }) {
             <button
               type="submit"
               className="btn btn-primary"
-              style={{ width: '100%', padding: '0.85rem', marginTop: '0.5rem' }}
+              style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem' }}
               disabled={loading}
             >
-              {loading ? 'Verifying OTP...' : 'Verify Code'}
+              {loading ? 'Verifying...' : 'Verify code'}
             </button>
             <button
               type="button"
               onClick={() => { setStep(1); setFallbackOtp(''); }}
               className="btn btn-secondary"
-              style={{ width: '100%', padding: '0.85rem', marginTop: '0.75rem' }}
+              style={{ width: '100%', padding: '0.65rem', marginTop: '0.5rem', fontSize: '0.85rem' }}
               disabled={loading}
             >
-              Back
+              &larr; Back
             </button>
           </form>
         )}
@@ -297,28 +325,28 @@ export default function ForgotPassword({ setView }) {
         {/* Step 3: Reset Form */}
         {step === 3 && (
           <form onSubmit={handleResetPassword} className="fade-in">
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-              Verification authorized. Set your new clinical portal password below.
+            <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: 1.5, marginBottom: '1.25rem' }}>
+              Your code has been verified. Create a new secure password for your account.
             </p>
             <div className="form-group">
-              <label className="form-label">New Password</label>
+              <label className="form-label">New password</label>
               <input
                 type="password"
                 className="form-input"
                 required
-                placeholder="••••••••"
+                placeholder="At least 6 characters"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 disabled={loading}
               />
             </div>
             <div className="form-group">
-              <label className="form-label">Confirm New Password</label>
+              <label className="form-label">Confirm new password</label>
               <input
                 type="password"
                 className="form-input"
                 required
-                placeholder="••••••••"
+                placeholder="Re-enter your new password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={loading}
@@ -327,21 +355,21 @@ export default function ForgotPassword({ setView }) {
             <button
               type="submit"
               className="btn btn-primary"
-              style={{ width: '100%', padding: '0.85rem', marginTop: '0.5rem' }}
+              style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem' }}
               disabled={loading}
             >
-              {loading ? 'Saving Password...' : 'Reset Password'}
+              {loading ? 'Saving...' : 'Update password'}
             </button>
           </form>
         )}
 
         {/* Return to Login */}
-        <div style={{ textAlign: 'center', marginTop: '1.5rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1.25rem' }}>
+        <div style={{ textAlign: 'center', marginTop: '1.5rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.25rem' }}>
           <span
             onClick={() => setView('login')}
-            style={{ fontSize: '0.9rem', color: 'var(--color-primary)', cursor: 'pointer', fontWeight: 600 }}
+            style={{ fontSize: '0.85rem', color: 'var(--color-primary)', cursor: 'pointer', fontWeight: 500 }}
           >
-            ➔ Return to Login Screen
+            &larr; Return to sign in
           </span>
         </div>
       </div>

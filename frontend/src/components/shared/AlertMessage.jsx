@@ -1,4 +1,5 @@
 import React from 'react';
+import { CheckCircleIcon, AlertCircleIcon } from './Icons';
 
 export default function AlertMessage({ msg }) {
   if (!msg || !msg.text) return null;
@@ -8,16 +9,27 @@ export default function AlertMessage({ msg }) {
   return (
     <div
       style={{
-        background: isDanger ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-        border: isDanger ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(16, 185, 129, 0.3)',
-        color: isDanger ? '#fca5a5' : '#34d399',
-        padding: '0.75rem 1.25rem',
-        borderRadius: 'var(--radius-md)',
-        marginBottom: '1.5rem',
+        background: isDanger ? '#fef2f2' : '#f0fdf4',
+        border: isDanger ? '1px solid #fecaca' : '1px solid #bbf7d0',
+        color: isDanger ? '#b91c1c' : '#15803d',
+        padding: '0.75rem 1.15rem',
+        borderRadius: 'var(--radius-sm)',
+        marginBottom: '1.25rem',
         fontWeight: 500,
+        fontSize: '0.88rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.65rem'
       }}
     >
-      {msg.text}
+      <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+        {isDanger ? (
+          <AlertCircleIcon size={18} color="#b91c1c" />
+        ) : (
+          <CheckCircleIcon size={18} color="#15803d" />
+        )}
+      </div>
+      <div>{msg.text}</div>
     </div>
   );
 }

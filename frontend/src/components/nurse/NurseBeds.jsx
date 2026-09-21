@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { API_URL } from '../../context/AuthContext';
+import { BedIcon } from '../shared/Icons';
 
 export default function NurseBeds({ beds, token, onRefresh, showMsg }) {
   const [selectedBed, setSelectedBed] = useState(null);
@@ -47,9 +48,9 @@ export default function NurseBeds({ beds, token, onRefresh, showMsg }) {
               {wardsMap[wardName].map(bed => {
                 const isAvail = bed.status === 'Available';
                 const isOccupied = bed.status === 'Occupied';
-                const bg = isAvail ? 'rgba(16, 185, 129, 0.15)' : isOccupied ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)';
-                const border = isAvail ? 'rgba(16, 185, 129, 0.3)' : isOccupied ? 'rgba(239, 68, 68, 0.3)' : 'rgba(245, 158, 11, 0.3)';
-                const color = isAvail ? '#34d399' : isOccupied ? '#fca5a5' : '#fde047';
+                const bg = isAvail ? '#f0fdf4' : isOccupied ? '#fef2f2' : '#fffbeb';
+                const border = isAvail ? '#bbf7d0' : isOccupied ? '#fecaca' : '#fde68a';
+                const color = isAvail ? '#15803d' : isOccupied ? '#b91c1c' : '#b45309';
                 return (
                   <div
                     key={bed._id}
@@ -61,7 +62,9 @@ export default function NurseBeds({ beds, token, onRefresh, showMsg }) {
                       borderWidth: selectedBed?._id === bed._id ? '2px' : '1px'
                     }}
                   >
-                    <p style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>🛏️</p>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.4rem' }}>
+                      <BedIcon size={24} color={color} />
+                    </div>
                     <p style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>{bed.bedNumber}</p>
                     <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 600 }}>{bed.status}</span>
                   </div>

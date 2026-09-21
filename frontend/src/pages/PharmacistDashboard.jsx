@@ -35,9 +35,9 @@ export default function PharmacistDashboard() {
   };
 
   const sidebarItems = [
-    { id: 'prescriptions', label: 'Prescription Queue', icon: '📋' },
-    { id: 'inventory', label: 'Drug Inventory catalog', icon: '💊' },
-    { id: 'add_drug', label: 'Catalog Intake', icon: '➕' }
+    { id: 'prescriptions', label: 'Prescription Queue' },
+    { id: 'inventory', label: 'Drug Inventory Catalog' },
+    { id: 'add_drug', label: 'Catalog Intake' }
   ];
 
   return (

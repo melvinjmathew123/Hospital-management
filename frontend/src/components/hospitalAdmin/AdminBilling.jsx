@@ -196,9 +196,10 @@ export default function AdminBilling({ bills, token, onRefresh, showMsg }) {
                       <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', paddingBottom: '0.25rem', borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
                         <div>
                           <span className="badge" style={{
-                            background: payment.method === 'Online' ? 'rgba(34, 211, 238, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-                            color: payment.method === 'Online' ? '#22d3ee' : 'var(--text-main)',
-                            marginRight: '0.5rem', padding: '0.1rem 0.4rem', fontSize: '0.65rem'
+                            background: payment.method === 'Online' ? '#f0fdfa' : '#f1f5f9',
+                            color: payment.method === 'Online' ? '#0f766e' : '#334155',
+                            border: payment.method === 'Online' ? '1px solid #99f6e4' : '1px solid #cbd5e1',
+                            marginRight: '0.5rem', padding: '0.15rem 0.45rem', fontSize: '0.68rem', fontWeight: 600
                           }}>{payment.method}</span>
                           <span style={{ color: 'var(--text-muted)' }}>{new Date(payment.paymentDate).toLocaleDateString()}</span>
                           {payment.remarks && <span style={{ fontStyle: 'italic', color: 'var(--text-muted)', marginLeft: '0.5rem' }}>— {payment.remarks}</span>}
@@ -440,9 +441,10 @@ export default function AdminBilling({ bills, token, onRefresh, showMsg }) {
                           <td style={{ padding: '0.6rem 0' }}>{new Date(p.paymentDate).toLocaleDateString()}</td>
                           <td style={{ padding: '0.6rem 0' }}>
                             <span style={{
-                              background: p.method === 'Online' ? 'rgba(34, 211, 238, 0.15)' : 'rgba(255,255,255,0.05)',
-                              color: p.method === 'Online' ? '#22d3ee' : '#fff',
-                              padding: '0.1rem 0.4rem', fontSize: '0.7rem', borderRadius: '3px'
+                              background: p.method === 'Online' ? '#f0fdfa' : '#f1f5f9',
+                              color: p.method === 'Online' ? '#0f766e' : '#334155',
+                              border: p.method === 'Online' ? '1px solid #99f6e4' : '1px solid #cbd5e1',
+                              padding: '0.15rem 0.45rem', fontSize: '0.7rem', borderRadius: '4px', fontWeight: 600
                             }}>{p.method}</span>
                           </td>
                           <td style={{ padding: '0.6rem 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>{p.remarks || 'No remarks recorded'}</td>
@@ -476,14 +478,11 @@ export default function AdminBilling({ bills, token, onRefresh, showMsg }) {
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', padding: '1.5rem 2.5rem', background: '#090b14', borderTop: '1px solid var(--glass-border)' }} className="no-print">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', padding: '1.25rem 2.5rem', background: '#f8fafc', borderTop: '1px solid var(--border-main)' }} className="no-print">
               <button onClick={() => setReceiptModalOpen(false)} type="button" className="btn btn-secondary" style={{ padding: '0.6rem 1.2rem', cursor: 'pointer' }}>Close</button>
               <button
                 onClick={() => window.print()} type="button" className="btn btn-primary"
-                style={{
-                  background: 'linear-gradient(135deg, #06b6d4, #3b82f6)', boxShadow: '0 4px 15px rgba(6, 182, 212, 0.4)',
-                  padding: '0.6rem 1.5rem', fontWeight: 600, cursor: 'pointer', border: 'none', color: '#fff', borderRadius: 'var(--radius-md)'
-                }}
+                style={{ padding: '0.6rem 1.5rem', fontWeight: 600, cursor: 'pointer' }}
               >
                 🖨️ Print Receipt
               </button>

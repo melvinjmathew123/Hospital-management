@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNotifications } from '../../context/NotificationContext';
+import { BellIcon } from './Icons';
 
 const TYPE_COLORS = {
-  appointment: { bg: 'rgba(99, 102, 241, 0.12)', border: 'rgba(99,102,241,0.3)', dot: '#818cf8' },
-  lab:         { bg: 'rgba(34, 211, 238, 0.10)', border: 'rgba(34,211,238,0.3)', dot: '#22d3ee' },
-  payment:     { bg: 'rgba(16, 185, 129, 0.10)', border: 'rgba(16,185,129,0.3)', dot: '#10b981' },
-  warning:     { bg: 'rgba(245, 158, 11, 0.10)', border: 'rgba(245,158,11,0.3)', dot: '#f59e0b' },
-  success:     { bg: 'rgba(16, 185, 129, 0.10)', border: 'rgba(16,185,129,0.3)', dot: '#10b981' },
-  default:     { bg: 'rgba(255,255,255,0.04)',    border: 'rgba(255,255,255,0.08)', dot: '#9ca3af' },
+  appointment: { bg: '#eff6ff', border: '#bfdbfe', dot: '#2563eb' },
+  lab:         { bg: '#ecfdf5', border: '#a7f3d0', dot: '#059669' },
+  payment:     { bg: '#fffbeb', border: '#fde68a', dot: '#d97706' },
+  warning:     { bg: '#fff7ed', border: '#fed7aa', dot: '#ea580c' },
+  success:     { bg: '#ecfdf5', border: '#a7f3d0', dot: '#059669' },
+  default:     { bg: '#f8fafc', border: '#e2e8f0', dot: '#64748b' },
 };
 
 function timeAgo(date) {
@@ -47,27 +48,30 @@ export default function NotificationBell() {
         title="Notifications"
         style={{
           position: 'relative',
-          width: '42px',
-          height: '42px',
+          width: '38px',
+          height: '38px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: 'var(--radius-md)',
-          background: open ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.04)',
-          border: `1px solid ${open ? 'rgba(99,102,241,0.4)' : 'var(--glass-border)'}`,
+          borderRadius: 'var(--radius-sm)',
+          background: '#ffffff',
+          border: '1px solid #cbd5e1',
           cursor: 'pointer',
-          fontSize: '1.2rem',
-          transition: 'all 0.2s ease',
+          fontSize: '1.1rem',
+          boxShadow: 'var(--shadow-sm)',
+          transition: 'all 0.15s ease',
         }}
       >
         {/* Animated bell */}
         <span
           style={{
-            display: 'inline-block',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             animation: unreadCount > 0 ? 'bellShake 1.2s ease infinite' : 'none',
           }}
         >
-          🔔
+          <BellIcon size={18} color="#334155" />
         </span>
 
         {/* Unread badge */}
@@ -75,21 +79,20 @@ export default function NotificationBell() {
           <span
             style={{
               position: 'absolute',
-              top: '-6px',
-              right: '-6px',
+              top: '-4px',
+              right: '-4px',
               minWidth: '18px',
               height: '18px',
               borderRadius: '9px',
-              background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-              color: '#fff',
+              background: '#ef4444',
+              color: '#ffffff',
               fontSize: '0.65rem',
-              fontWeight: 800,
+              fontWeight: 700,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               padding: '0 4px',
-              boxShadow: '0 0 8px rgba(239,68,68,0.6)',
-              animation: 'badgePulse 2s ease infinite',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
             }}
           >
             {unreadCount > 99 ? '99+' : unreadCount}
@@ -97,119 +100,101 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {/* Keyframe styles */}
-      <style>{`
-        @keyframes bellShake {
-          0%, 100% { transform: rotate(0deg); }
-          10%, 30%, 50%, 70%, 90% { transform: rotate(-8deg); }
-          20%, 40%, 60%, 80% { transform: rotate(8deg); }
-        }
-        @keyframes badgePulse {
-          0%, 100% { box-shadow: 0 0 8px rgba(239,68,68,0.6); }
-          50% { box-shadow: 0 0 16px rgba(239,68,68,0.9); }
-        }
-        @keyframes drawerSlideIn {
-          from { opacity: 0; transform: translateY(-12px) scale(0.96); }
-          to   { opacity: 1; transform: translateY(0) scale(1); }
-        }
-      `}</style>
-
-      {/* Notification Drawer */}
+      {/* Drawer */}
       {open && (
         <div
           style={{
             position: 'absolute',
-            top: 'calc(100% + 12px)',
+            top: 'calc(100% + 8px)',
             right: 0,
-            width: '380px',
-            maxWidth: '95vw',
-            background: 'linear-gradient(145deg, #0e1527, #0a0f1e)',
-            border: '1px solid rgba(99,102,241,0.25)',
-            borderRadius: 'var(--radius-lg)',
-            boxShadow: '0 25px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04)',
+            width: '360px',
+            maxWidth: '92vw',
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: 'var(--radius-md)',
+            boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.05)',
             zIndex: 1100,
-            animation: 'drawerSlideIn 0.2s ease',
             overflow: 'hidden',
           }}
         >
           {/* Header */}
           <div style={{
-            padding: '1rem 1.25rem 0.75rem',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            padding: '0.85rem 1.15rem',
+            borderBottom: '1px solid #e2e8f0',
+            background: '#f8fafc',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>
+              <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#0f172a' }}>
                 Notifications
                 {unreadCount > 0 && (
                   <span style={{
                     marginLeft: '0.5rem',
-                    background: 'rgba(99,102,241,0.2)',
-                    color: '#818cf8',
+                    background: '#eff6ff',
+                    color: '#2563eb',
                     fontSize: '0.65rem',
-                    fontWeight: 700,
+                    fontWeight: 600,
                     padding: '2px 7px',
                     borderRadius: '10px',
-                    border: '1px solid rgba(99,102,241,0.3)',
+                    border: '1px solid #bfdbfe',
                   }}>
                     {unreadCount} new
                   </span>
                 )}
               </h3>
             </div>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', gap: '0.4rem' }}>
               {unreadCount > 0 && (
                 <button
                   onClick={markAllRead}
                   style={{
-                    background: 'transparent',
-                    border: '1px solid rgba(99,102,241,0.3)',
-                    color: '#818cf8',
+                    background: '#ffffff',
+                    border: '1px solid #cbd5e1',
+                    color: '#2563eb',
                     fontSize: '0.7rem',
-                    padding: '3px 8px',
-                    borderRadius: '6px',
+                    padding: '3px 7px',
+                    borderRadius: '4px',
                     cursor: 'pointer',
-                    fontWeight: 600,
+                    fontWeight: 500,
                   }}
                 >
-                  ✓ All read
+                  Mark all read
                 </button>
               )}
               {notifications.length > 0 && (
                 <button
                   onClick={clearAll}
                   style={{
-                    background: 'transparent',
-                    border: '1px solid rgba(239,68,68,0.3)',
-                    color: '#f87171',
+                    background: '#ffffff',
+                    border: '1px solid #fecaca',
+                    color: '#ef4444',
                     fontSize: '0.7rem',
-                    padding: '3px 8px',
-                    borderRadius: '6px',
+                    padding: '3px 7px',
+                    borderRadius: '4px',
                     cursor: 'pointer',
-                    fontWeight: 600,
+                    fontWeight: 500,
                   }}
                 >
-                  🗑 Clear
+                  Clear
                 </button>
               )}
             </div>
           </div>
 
           {/* Notification list */}
-          <div style={{ maxHeight: '420px', overflowY: 'auto', padding: '0.5rem 0' }}>
+          <div style={{ maxHeight: '380px', overflowY: 'auto' }}>
             {notifications.length === 0 ? (
               <div style={{
                 padding: '2.5rem 1.25rem',
                 textAlign: 'center',
-                color: 'var(--text-muted)',
+                color: '#64748b',
                 fontSize: '0.85rem',
               }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🔕</div>
-                <p style={{ margin: 0 }}>No notifications yet</p>
-                <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', opacity: 0.6 }}>
-                  You'll see updates from appointments, lab results, and payments here.
+                <p style={{ margin: 0, fontWeight: 500, color: '#334155' }}>No notifications right now</p>
+                <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem' }}>
+                  You will receive updates about appointments, lab test results, and billing here.
                 </p>
               </div>
             ) : (
@@ -220,31 +205,30 @@ export default function NotificationBell() {
                     key={notif.id}
                     onClick={() => markOneRead(notif.id)}
                     style={{
-                      padding: '0.85rem 1.25rem',
+                      padding: '0.8rem 1.15rem',
                       display: 'flex',
-                      gap: '0.85rem',
+                      gap: '0.75rem',
                       alignItems: 'flex-start',
                       cursor: 'pointer',
-                      background: notif.read ? 'transparent' : colors.bg,
+                      background: notif.read ? '#ffffff' : colors.bg,
                       borderLeft: notif.read ? '3px solid transparent' : `3px solid ${colors.dot}`,
-                      transition: 'background 0.2s',
-                      borderBottom: '1px solid rgba(255,255,255,0.03)',
+                      borderBottom: '1px solid #f1f5f9',
+                      transition: 'background 0.15s',
                     }}
                   >
-                    {/* Icon circle */}
                     <div style={{
-                      width: '36px',
-                      height: '36px',
+                      width: '32px',
+                      height: '32px',
                       borderRadius: '50%',
-                      background: colors.bg,
+                      background: '#ffffff',
                       border: `1px solid ${colors.border}`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '1.1rem',
+                      fontSize: '0.95rem',
                       flexShrink: 0,
                     }}>
-                      {notif.icon || '🔔'}
+                      {notif.icon || <BellIcon size={16} color={colors.dot} />}
                     </div>
 
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -253,21 +237,21 @@ export default function NotificationBell() {
                         justifyContent: 'space-between',
                         alignItems: 'flex-start',
                         gap: '0.5rem',
-                        marginBottom: '0.25rem',
+                        marginBottom: '0.15rem',
                       }}>
                         <p style={{
                           margin: 0,
                           fontSize: '0.82rem',
-                          fontWeight: notif.read ? 500 : 700,
-                          color: notif.read ? 'var(--text-muted)' : 'var(--text-main)',
+                          fontWeight: notif.read ? 500 : 600,
+                          color: '#0f172a',
                           lineHeight: 1.3,
                         }}>
                           {notif.title}
                         </p>
                         {!notif.read && (
                           <span style={{
-                            width: '7px',
-                            height: '7px',
+                            width: '6px',
+                            height: '6px',
                             borderRadius: '50%',
                             background: colors.dot,
                             flexShrink: 0,
@@ -277,14 +261,14 @@ export default function NotificationBell() {
                       </div>
                       <p style={{
                         margin: 0,
-                        fontSize: '0.75rem',
-                        color: 'var(--text-muted)',
-                        lineHeight: 1.5,
-                        marginBottom: '0.3rem',
+                        fontSize: '0.78rem',
+                        color: '#64748b',
+                        lineHeight: 1.4,
+                        marginBottom: '0.2rem',
                       }}>
                         {notif.message}
                       </p>
-                      <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)' }}>
+                      <span style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
                         {timeAgo(notif.timestamp)}
                       </span>
                     </div>
@@ -293,19 +277,6 @@ export default function NotificationBell() {
               })
             )}
           </div>
-
-          {/* Footer */}
-          {notifications.length > 0 && (
-            <div style={{
-              padding: '0.6rem 1.25rem',
-              borderTop: '1px solid rgba(255,255,255,0.05)',
-              textAlign: 'center',
-              fontSize: '0.7rem',
-              color: 'rgba(255,255,255,0.25)',
-            }}>
-              Notifications are session-only and clear on logout
-            </div>
-          )}
         </div>
       )}
     </div>

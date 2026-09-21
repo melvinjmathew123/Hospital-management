@@ -37,11 +37,11 @@ export default function SuperAdminDashboard() {
   };
 
   const sidebarItems = [
-    { id: 'overview', label: 'Dashboard Overview', icon: '📊' },
-    { id: 'departments', label: 'Departments', icon: '🏢' },
-    { id: 'wards', label: 'Wards', icon: '🛏️' },
-    { id: 'beds', label: 'Beds & Rooms', icon: '🏨' },
-    { id: 'users', label: 'User Directory', icon: '👥' }
+    { id: 'overview', label: 'Dashboard Overview' },
+    { id: 'departments', label: 'Departments' },
+    { id: 'wards', label: 'Wards' },
+    { id: 'beds', label: 'Beds & Rooms' },
+    { id: 'users', label: 'User Directory' }
   ];
 
   return (

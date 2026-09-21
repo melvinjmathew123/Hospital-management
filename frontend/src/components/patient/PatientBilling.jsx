@@ -313,8 +313,6 @@ export default function PatientBilling({ bills, patientProfile, user, token, onP
                   style={{
                     width: '100%', marginTop: '1.5rem', padding: '0.65rem',
                     fontSize: '0.9rem', fontWeight: 600,
-                    background: 'linear-gradient(135deg, #06b6d4, #3b82f6)',
-                    boxShadow: '0 4px 15px rgba(6, 182, 212, 0.3)',
                   }}
                 >
                   💳 Pay Now — ₹{bill.balanceAmount}
@@ -327,7 +325,6 @@ export default function PatientBilling({ bills, patientProfile, user, token, onP
                   style={{
                     width: '100%', marginTop: bill.balanceAmount > 0 ? '0.5rem' : '1.5rem',
                     padding: '0.6rem', fontSize: '0.85rem',
-                    background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)',
                   }}
                 >
                   📄 View &amp; Print Receipt
@@ -759,9 +756,10 @@ export default function PatientBilling({ bills, patientProfile, user, token, onP
                           <td style={{ padding: '0.6rem 0' }}>{new Date(p.paymentDate).toLocaleDateString()}</td>
                           <td style={{ padding: '0.6rem 0' }}>
                             <span style={{
-                              background: p.method === 'Online' ? 'rgba(34,211,238,0.15)' : 'rgba(255,255,255,0.05)',
-                              color: p.method === 'Online' ? '#22d3ee' : '#fff',
-                              padding: '0.1rem 0.4rem', fontSize: '0.7rem', borderRadius: '3px',
+                              background: p.method === 'Online' ? '#f0fdfa' : '#f1f5f9',
+                              color: p.method === 'Online' ? '#0f766e' : '#334155',
+                              border: p.method === 'Online' ? '1px solid #99f6e4' : '1px solid #cbd5e1',
+                              padding: '0.15rem 0.45rem', fontSize: '0.7rem', borderRadius: '4px', fontWeight: 600
                             }}>{p.method}</span>
                           </td>
                           <td style={{ padding: '0.6rem 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>

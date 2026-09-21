@@ -1,17 +1,52 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import {
+  StethoscopeIcon,
+  HeartPulseIcon,
+  TestTubeIcon,
+  BedIcon,
+  PillIcon,
+  AmbulanceIcon,
+  PhoneIcon,
+  CheckCircleIcon,
+  ShieldCheckIcon
+} from '../components/shared/Icons';
 
 export default function Homepage({ setView }) {
   const { user } = useAuth();
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   const services = [
-    { icon: '🩺', title: 'General Outpatient (OPD)', desc: 'Comprehensive everyday health care, physical consultations, and wellness checks.' },
-    { icon: '❤️', title: 'Cardiology Center', desc: 'State-of-the-art diagnostic testing, pacemaker checking, and acute heart therapies.' },
-    { icon: '🧪', title: 'Pathology & Lab Diagnostics', desc: 'Rapid hematology, biochemistry, and clinical pathology tests in modern laboratory chambers.' },
-    { icon: '🛏️', title: 'Intensive Ward Care (IPD)', desc: 'High-tech smart ICU beds, nurse-attending vital records, and clinical oversight.' },
-    { icon: '💊', title: 'In-house Pharmacy', desc: 'Secure medication management, digital ledger prescription check, and instant collection.' },
-    { icon: '🚨', title: '24/7 Emergency & ICU', desc: 'Immediate emergency rescue, ambulance service, and round-the-clock surgeon support.' }
+    {
+      icon: <StethoscopeIcon size={24} color="#2563eb" />,
+      title: 'General Outpatient (OPD)',
+      desc: 'Everyday primary healthcare, routine doctor consultations, preventative health screenings, and comprehensive wellness checks.'
+    },
+    {
+      icon: <HeartPulseIcon size={24} color="#2563eb" />,
+      title: 'Cardiology Center',
+      desc: 'Advanced cardiac diagnostics, non-invasive imaging, ECGs, and ongoing heart disease management by certified cardiologists.'
+    },
+    {
+      icon: <TestTubeIcon size={24} color="#2563eb" />,
+      title: 'Pathology & Diagnostics',
+      desc: 'Certified clinical laboratory testing, routine hematology, biochemistry, and rapid online report turnaround.'
+    },
+    {
+      icon: <BedIcon size={24} color="#2563eb" />,
+      title: 'Inpatient Ward Care (IPD)',
+      desc: 'Dedicated patient ward beds, modern intensive care units, 24/7 nursing supervision, and post-operative recovery monitoring.'
+    },
+    {
+      icon: <PillIcon size={24} color="#2563eb" />,
+      title: 'Hospital Pharmacy',
+      desc: 'Fully licensed clinical pharmacy providing verified digital medication dispensing, prescription reviews, and guidance.'
+    },
+    {
+      icon: <AmbulanceIcon size={24} color="#2563eb" />,
+      title: '24/7 Emergency Care',
+      desc: 'Immediate emergency triage, critical resuscitation facilities, rapid ambulance dispatch, and on-call trauma surgeons.'
+    }
   ];
 
   return (
@@ -19,77 +54,76 @@ export default function Homepage({ setView }) {
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
-      background: 'radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.12) 0%, transparent 50%), radial-gradient(circle at 10% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 45%)'
+      backgroundColor: '#f8fafc',
+      color: '#0f172a',
     }}>
-      {/* Dynamic Navigation Bar */}
+      {/* Navigation Bar */}
       <header className="homepage-header" style={{
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        background: 'rgba(3, 7, 18, 0.75)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid var(--glass-border)',
-        padding: '1rem 3rem',
+        background: '#ffffff',
+        borderBottom: '1px solid #e2e8f0',
+        padding: '0.85rem 2.5rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: '100%'
+        width: '100%',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexGrow: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
+            width: '38px',
+            height: '38px',
+            borderRadius: '8px',
+            background: 'var(--color-primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '1.25rem',
-            color: '#fff',
-            fontWeight: 800
-          }}>A</div>
+            color: '#ffffff',
+            fontWeight: 800,
+          }}>+</div>
           <div>
-            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, background: 'linear-gradient(135deg, #22d3ee, #fff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.01em' }}>
-              APOLLO HOSPITAL
+            <h1 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.01em' }}>
+              {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}
             </h1>
-            <p style={{ fontSize: '0.6rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.075em' }}>
-              Apollo Care Network
+            <p style={{ fontSize: '0.7rem', color: '#64748b', margin: 0 }}>
+              Healthcare Network
             </p>
           </div>
         </div>
 
-        {/* Mobile Nav Toggle Button */}
+        {/* Mobile Nav Toggle */}
         <button
           onClick={() => setIsNavOpen(!isNavOpen)}
           className="btn btn-secondary mobile-only-toggle"
           style={{
             display: 'none',
-            padding: '0.4rem 0.75rem',
-            fontSize: '1.25rem',
-            background: 'transparent',
-            borderColor: 'var(--glass-border)'
+            padding: '0.35rem 0.65rem',
+            fontSize: '1.1rem',
           }}
         >
           ☰
         </button>
 
         <nav className={`homepage-nav ${isNavOpen ? 'nav-open' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <a href="#services" onClick={() => setIsNavOpen(false)} className="nav-link">Services</a>
-          <a href="#about" onClick={() => setIsNavOpen(false)} className="nav-link">About Us</a>
+          <a href="#services" onClick={() => setIsNavOpen(false)} className="nav-link">Clinical Services</a>
+          <a href="#about" onClick={() => setIsNavOpen(false)} className="nav-link">About Hospital</a>
           <a href="#contact" onClick={() => setIsNavOpen(false)} className="nav-link">Contact</a>
           
-          <div style={{ display: 'flex', gap: '1rem', marginLeft: '1rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', marginLeft: '0.5rem' }}>
             {user ? (
-              <button onClick={() => { setIsNavOpen(false); setView('dashboard'); }} className="btn btn-primary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem' }}>
-                Go to Console
+              <button onClick={() => { setIsNavOpen(false); setView('dashboard'); }} className="btn btn-primary" style={{ padding: '0.5rem 1.15rem' }}>
+                Open Dashboard
               </button>
             ) : (
               <>
-                <button onClick={() => { setIsNavOpen(false); setView('login'); }} className="btn btn-secondary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem' }}>
-                  Sign In
+                <button onClick={() => { setIsNavOpen(false); setView('login'); }} className="btn btn-secondary" style={{ padding: '0.5rem 1.1rem' }}>
+                  Sign in
                 </button>
-                <button onClick={() => { setIsNavOpen(false); setView('signup'); }} className="btn btn-primary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem' }}>
-                  Join Portal
+                <button onClick={() => { setIsNavOpen(false); setView('signup'); }} className="btn btn-primary" style={{ padding: '0.5rem 1.1rem' }}>
+                  Register as Patient
                 </button>
               </>
             )}
@@ -97,72 +131,127 @@ export default function Homepage({ setView }) {
         </nav>
       </header>
 
-      {/* Hero Section */}
+      {/* Main Content */}
       <main style={{ flexGrow: 1 }}>
+        {/* Hero Section */}
         <section style={{
-          padding: '8rem 2rem 6rem 2rem',
-          textAlign: 'center',
-          maxWidth: '1000px',
-          margin: '0 auto'
+          padding: '4.5rem 1.5rem 3rem 1.5rem',
+          maxWidth: '1200px',
+          margin: '0 auto',
         }}>
-          <span style={{
-            background: 'rgba(6, 182, 212, 0.1)',
-            border: '1px solid rgba(6, 182, 212, 0.2)',
-            color: '#22d3ee',
-            padding: '0.35rem 1rem',
-            borderRadius: '9999px',
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.075em'
-          }}>
-            🏥 Certified Clinical Excellence Center
-          </span>
-          <h1 className="hero-title" style={{
-            fontSize: '4rem',
-            fontWeight: 800,
-            lineHeight: 1.15,
-            marginTop: '1.5rem',
-            marginBottom: '1.5rem',
-            letterSpacing: '-0.03em'
-          }}>
-            The Future of Clinical Care <br />
-            <span style={{ background: 'linear-gradient(135deg, #22d3ee, #6366f1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Unified & Patient-Centered
-            </span>
-          </h1>
-          <p style={{
-            color: 'var(--text-muted)',
-            fontSize: '1.25rem',
-            maxWidth: '700px',
-            margin: '0 auto 2.5rem auto',
-            lineHeight: 1.6
-          }}>
-            Access Apollo Hospital medical files, coordinate live nursing vitals charts, verify certified billing ledgers, and secure clinical appointments online.
-          </p>
+          <div className="grid-split" style={{ alignItems: 'center', gap: '3rem' }}>
+            <div>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: '#eff6ff',
+                border: '1px solid #bfdbfe',
+                color: '#1d4ed8',
+                padding: '0.35rem 0.85rem',
+                borderRadius: '9999px',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                marginBottom: '1.25rem'
+              }}>
+                <ShieldCheckIcon size={16} color="#2563eb" />
+                <span>Certified Clinical Healthcare Network</span>
+              </div>
+              <h1 className="hero-title" style={{
+                fontSize: '3rem',
+                fontWeight: 800,
+                lineHeight: 1.18,
+                marginBottom: '1.25rem',
+                letterSpacing: '-0.025em',
+                color: '#0f172a'
+              }}>
+                Compassionate Care,<br />
+                <span style={{ color: 'var(--color-primary)' }}>
+                  Modern Healthcare Management
+                </span>
+              </h1>
+              <p style={{
+                color: '#475569',
+                fontSize: '1.1rem',
+                margin: '0 0 2rem 0',
+                lineHeight: 1.6
+              }}>
+                Schedule doctor appointments, review certified diagnostic lab results, manage medical records, and consult with leading clinical specialists in one integrated healthcare portal.
+              </p>
 
-          <div className="hero-buttons" style={{ display: 'flex', justifyContent: 'center', gap: '1.25rem' }}>
-            <button onClick={() => setView(user ? 'dashboard' : 'signup')} className="btn btn-primary" style={{ padding: '0.9rem 2.25rem', fontSize: '1rem' }}>
-              {user ? 'Open Dashboard Console ➔' : 'Register Portal Profile ➔'}
-            </button>
-            <a href="#services" className="btn btn-secondary" style={{ padding: '0.9rem 2.25rem', fontSize: '1rem', textDecoration: 'none' }}>
-              Explore Services
-            </a>
+              <div className="hero-buttons" style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap' }}>
+                <button onClick={() => setView(user ? 'dashboard' : 'signup')} className="btn btn-primary" style={{ padding: '0.75rem 1.75rem', fontSize: '0.95rem' }}>
+                  {user ? 'Go to your dashboard' : 'Register as Patient'}
+                </button>
+                <button onClick={() => setView('login')} className="btn btn-secondary" style={{ padding: '0.75rem 1.75rem', fontSize: '0.95rem' }}>
+                  Staff & Patient Sign In
+                </button>
+              </div>
+            </div>
+
+            {/* Real Hospital Photography */}
+            <div style={{ position: 'relative' }}>
+              <div style={{
+                overflow: 'hidden',
+                borderRadius: 'var(--radius-lg)',
+                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
+                border: '1px solid #e2e8f0',
+                background: '#ffffff'
+              }}>
+                <img
+                  src="/hospital_hero.jpg"
+                  alt="Modern Hospital Clinic Consultation"
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    display: 'block',
+                    objectFit: 'cover'
+                  }}
+                />
+              </div>
+              <div style={{
+                position: 'absolute',
+                bottom: '-15px',
+                left: '20px',
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
+                padding: '0.75rem 1.25rem',
+                borderRadius: 'var(--radius-md)',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem'
+              }}>
+                <div style={{
+                  width: '32px', height: '32px', borderRadius: '50%',
+                  background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                  <CheckCircleIcon size={18} color="#059669" />
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontSize: '0.82rem', fontWeight: 700, color: '#0f172a' }}>Accredited Specialists</p>
+                  <p style={{ margin: 0, fontSize: '0.72rem', color: '#64748b' }}>Over 120 certified physicians</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Quick Metrics Grid */}
-          <div className="grid-4-col" style={{
-            marginTop: '6rem'
-          }}>
+          {/* Metrics Grid */}
+          <div className="grid-4-col" style={{ marginTop: '4.5rem' }}>
             {[
-              { val: '24/7', label: 'Emergency Support' },
-              { val: '120+', label: 'Specialist Doctors' },
-              { val: '10,000+', label: 'Happy Patients' },
-              { val: '99.8%', label: 'Clinical Accuracy' }
+              { val: '24 / 7', label: 'Emergency Coverage' },
+              { val: '120+', label: 'Certified Doctors' },
+              { val: '15,000+', label: 'Patients Treated' },
+              { val: '99.8%', label: 'Diagnostic Accuracy' }
             ].map((stat, i) => (
-              <div key={i} className="glass-card" style={{ padding: '1.5rem 1rem' }}>
-                <h3 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-primary)', marginBottom: '0.25rem' }}>{stat.val}</h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{stat.label}</p>
+              <div key={i} className="glass-card" style={{
+                padding: '1.5rem 1rem',
+                textAlign: 'center',
+                background: '#ffffff',
+                border: '1px solid #e2e8f0'
+              }}>
+                <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-primary)', marginBottom: '0.25rem' }}>{stat.val}</h3>
+                <p style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{stat.label}</p>
               </div>
             ))}
           </div>
@@ -170,25 +259,48 @@ export default function Homepage({ setView }) {
 
         {/* Services Section */}
         <section id="services" style={{
-          padding: '6rem 2rem',
-          background: 'rgba(255, 255, 255, 0.01)',
-          borderTop: '1px solid var(--glass-border)',
-          borderBottom: '1px solid var(--glass-border)'
+          padding: '5rem 1.5rem',
+          background: '#ffffff',
+          borderTop: '1px solid #e2e8f0',
+          borderBottom: '1px solid #e2e8f0'
         }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-              <h2 style={{ fontSize: '2.25rem', fontWeight: 800 }}>Explore Care Offerings</h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '0.5rem' }}>
-                State-of-the-art facilities engineered to support clinical excellence and premium patient treatment.
+            <div style={{ textAlign: 'center', marginBottom: '3.25rem' }}>
+              <span style={{ color: 'var(--color-primary)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                DEPARTMENTS & SPECIALTIES
+              </span>
+              <h2 style={{ fontSize: '2rem', fontWeight: 700, color: '#0f172a', marginTop: '0.35rem' }}>
+                Comprehensive Medical Services
+              </h2>
+              <p style={{ color: '#64748b', fontSize: '0.95rem', marginTop: '0.35rem', maxWidth: '560px', margin: '0.35rem auto 0 auto' }}>
+                Equipped with modern facilities, certified clinical professionals, and dedicated patient care.
               </p>
             </div>
 
             <div className="dashboard-grid">
               {services.map((serv, index) => (
-                <div key={index} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}>
-                  <div style={{ fontSize: '2.5rem' }}>{serv.icon}</div>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{serv.title}</h3>
-                  <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>{serv.desc}</p>
+                <div key={index} className="glass-card" style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.85rem',
+                  height: '100%',
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <div style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '8px',
+                    background: '#eff6ff',
+                    border: '1px solid #dbeafe',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {serv.icon}
+                  </div>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 600, color: '#0f172a' }}>{serv.title}</h3>
+                  <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: 1.55 }}>{serv.desc}</p>
                 </div>
               ))}
             </div>
@@ -196,31 +308,53 @@ export default function Homepage({ setView }) {
         </section>
 
         {/* About Section */}
-        <section id="about" style={{ padding: '6rem 2rem', maxWidth: '1200px', margin: '0 auto' }}>
-          <div className="grid-2-col" style={{ alignItems: 'center' }}>
+        <section id="about" style={{ padding: '5rem 1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
+          <div className="grid-2-col" style={{ alignItems: 'center', gap: '3rem' }}>
             <div>
-              <span style={{ color: 'var(--color-primary)', fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>WHO WE ARE</span>
-              <h2 style={{ fontSize: '2.25rem', fontWeight: 800, marginTop: '0.5rem', marginBottom: '1.5rem' }}>
-                Pioneering Healthcare Innovation Since 1983
+              <span style={{ color: 'var(--color-primary)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>ABOUT APOLLO HOSPITAL</span>
+              <h2 style={{ fontSize: '2rem', fontWeight: 700, marginTop: '0.35rem', marginBottom: '1rem', color: '#0f172a' }}>
+                Dedicated to Patient Care Since 1983
               </h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-                Apollo Hospital has consistently paved the way for advanced healthcare services across the region. With our state-of-the-art infrastructure, pioneering doctors, and specialized treatment wards, we ensure every visitor experiences premium clinical hospitality.
+              <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.65, marginBottom: '1.5rem' }}>
+                Our medical center combines decades of clinical experience with modern hospital information systems. We prioritize timely consultations, digital lab record access, and safe patient recovery.
               </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <p>⚡ <b>Real-time Vital Charting:</b> Continuous digital patient tracking.</p>
-                <p>🧪 <b>Advanced Labs:</b> Digital lab reports accessible instantly.</p>
-                <p>💳 <b>Transparent Billing:</b> Direct insurance claims processing ledger.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', color: '#334155', fontSize: '0.92rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <CheckCircleIcon size={18} color="#2563eb" />
+                  <span><b>Digital Health Records:</b> Instant access to lab pathology and doctor consultation notes.</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <CheckCircleIcon size={18} color="#2563eb" />
+                  <span><b>Continuous Vital Monitoring:</b> Dedicated inpatient nursing tracking and alarms.</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <CheckCircleIcon size={18} color="#2563eb" />
+                  <span><b>Transparent Invoicing:</b> Clear itemized medical billing and instant payment receipts.</span>
+                </div>
               </div>
             </div>
-            <div className="glass-panel" style={{ padding: '3rem', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 0, right: 0, width: '150px', height: '150px', background: 'radial-gradient(circle, var(--color-primary-rgb) 0%, transparent 70%)', opacity: 0.15 }}></div>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-primary)' }}>Emergency Outpatient Services</h3>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                Our 24-hour trauma support is fully functional with specialized cardiology and critical emergency doctors. Reach us instantly using the dedicated portal or call line.
+
+            <div style={{
+              padding: '2rem',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: 'var(--radius-lg)',
+              boxShadow: 'var(--shadow-sm)'
+            }}>
+              <div style={{
+                width: '40px', height: '40px', borderRadius: '8px',
+                background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: '1rem'
+              }}>
+                <PhoneIcon size={20} color="#b91c1c" />
+              </div>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem', color: '#0f172a' }}>24-Hour Emergency Helpline</h3>
+              <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: 1.55, marginBottom: '1.25rem' }}>
+                Our trauma and critical care teams are available 24/7. Call our priority dispatch center for immediate emergency admissions.
               </p>
-              <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '1.5rem' }}>
-                <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Direct Helpline</h4>
-                <p style={{ fontSize: '1.5rem', fontWeight: 800 }}>+1 (555) 0199-990</p>
+              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
+                <p style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', marginBottom: '0.2rem', fontWeight: 600 }}>Emergency Contact</p>
+                <p style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-primary)' }}>+1 (555) 0199-990</p>
               </div>
             </div>
           </div>
@@ -229,36 +363,38 @@ export default function Homepage({ setView }) {
 
       {/* Footer */}
       <footer id="contact" style={{
-        background: 'rgba(3, 7, 18, 0.9)',
-        borderTop: '1px solid var(--glass-border)',
-        padding: '4rem 2rem 2rem 2rem',
-        color: 'var(--text-muted)',
+        background: '#0f172a',
+        borderTop: '1px solid #1e293b',
+        padding: '3rem 1.5rem 2rem 1.5rem',
+        color: '#94a3b8',
         fontSize: '0.88rem'
       }}>
-        <div className="grid-3-col" style={{ maxWidth: '1200px', margin: '0 auto', gap: '2rem', marginBottom: '3rem' }}>
+        <div className="grid-3-col" style={{ maxWidth: '1200px', margin: '0 auto', gap: '2.5rem', marginBottom: '2.5rem' }}>
           <div>
-            <h3 style={{ color: '#fff', fontSize: '1.1rem', fontWeight: 700, marginBottom: '1rem' }}>Apollo Care Network</h3>
-            <p style={{ lineHeight: 1.6, maxWidth: '350px' }}>
-              Delivering secure, cutting-edge healthcare management solutions and patient-first clinical treatments.
+            <h3 style={{ color: '#ffffff', fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem' }}>
+              {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}
+            </h3>
+            <p style={{ lineHeight: 1.6, maxWidth: '320px', color: '#94a3b8' }}>
+              Committed to excellence in patient healthcare, preventative medicine, and comprehensive clinical services.
             </p>
           </div>
           <div>
-            <h4 style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 600, marginBottom: '1rem' }}>Portal Navigation</h4>
+            <h4 style={{ color: '#ffffff', fontSize: '0.88rem', fontWeight: 600, marginBottom: '0.75rem' }}>Navigation</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <span onClick={() => setView('login')} className="footer-link">Portal Login</span>
-              <span onClick={() => setView('signup')} className="footer-link">Patient Registration</span>
-              <span onClick={() => setView('home')} className="footer-link">Homepage</span>
+              <span onClick={() => setView('login')} className="footer-link">Sign in</span>
+              <span onClick={() => setView('signup')} className="footer-link">Patient registration</span>
+              <span onClick={() => setView('home')} className="footer-link">Hospital homepage</span>
             </div>
           </div>
           <div>
-            <h4 style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 600, marginBottom: '1rem' }}>Location Details</h4>
-            <p>121 Health Care Lane, NY</p>
-            <p style={{ marginTop: '0.5rem' }}>Phone: (555) 0100</p>
-            <p>Email: support@apollo.com</p>
+            <h4 style={{ color: '#ffffff', fontSize: '0.88rem', fontWeight: 600, marginBottom: '0.75rem' }}>Location & Contact</h4>
+            <p>121 Healthcare Blvd, Medical District</p>
+            <p style={{ marginTop: '0.25rem' }}>Phone: +1 (555) 0100</p>
+            <p style={{ marginTop: '0.25rem' }}>Email: support@apollohospital.org</p>
           </div>
         </div>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', borderTop: '1px solid var(--glass-border)', paddingTop: '2rem', textAlign: 'center', fontSize: '0.8rem' }}>
-          <p>© {new Date().getFullYear()} Apollo Hospital Care Network. All rights reserved. Managed Secure Portal.</p>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', borderTop: '1px solid #1e293b', paddingTop: '1.5rem', textAlign: 'center', fontSize: '0.8rem', color: '#64748b' }}>
+          <p>© {new Date().getFullYear()} {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}. All rights reserved.</p>
         </div>
       </footer>
     </div>

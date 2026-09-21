@@ -52,9 +52,9 @@ export default function HospitalAdminDashboard() {
   };
 
   const sidebarItems = [
-    { id: 'patients', label: 'Patient Intake', icon: '📝' },
-    { id: 'billing', label: 'Billing & Ledger', icon: '💳' },
-    { id: 'certificates', label: 'Certificates & Documents', icon: '📜' }
+    { id: 'patients', label: 'Patient Intake' },
+    { id: 'billing', label: 'Billing & Ledger' },
+    { id: 'certificates', label: 'Certificates & Documents' }
   ];
 
   return (

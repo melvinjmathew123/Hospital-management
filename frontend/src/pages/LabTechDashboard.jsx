@@ -79,8 +79,8 @@ export default function LabTechDashboard() {
   };
 
   const sidebarItems = [
-    { id: 'orders', label: 'Lab Workorders', icon: '🧪' },
-    { id: 'enter_results', label: 'Report Test Results', icon: '📝' }
+    { id: 'orders', label: 'Lab Workorders' },
+    { id: 'enter_results', label: 'Report Test Results' }
   ];
 
   return (

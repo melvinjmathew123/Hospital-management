@@ -4,25 +4,25 @@ import { API_URL, useAuth } from '../context/AuthContext';
 export default function SignUp({ setView }) {
   const { verifyRegistration, resendOtp } = useAuth();
   const [step, setStep] = useState(1); // 1: Form entry, 2: OTP verification
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp]   = useState('');
 
   const [fallbackOtp, setFallbackOtp] = useState(''); // shown when email delivery fails
-  const [role, setRole] = useState('Patient');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState('');
+  const [role, setRole]               = useState('Patient');
+  const [name, setName]               = useState('');
+  const [email, setEmail]             = useState('');
+  const [password, setPassword]       = useState('');
+  const [phone, setPhone]             = useState('');
   
   // Conditional Patient fields
-  const [dob, setDob] = useState('');
-  const [gender, setGender] = useState('Male');
+  const [dob, setDob]         = useState('');
+  const [gender, setGender]   = useState('Male');
   const [address, setAddress] = useState('');
 
   // Conditional Staff fields
   const [department, setDepartment] = useState('General');
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError]     = useState('');
   const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e) => {
@@ -31,12 +31,12 @@ export default function SignUp({ setView }) {
     setSuccess('');
 
     if (!name || !email || !password || !phone) {
-      setError('Please fill in all core fields.');
+      setError('Please fill in all required fields.');
       return;
     }
 
     if (role === 'Patient' && (!dob || !address || !gender)) {
-      setError('Please complete all Patient Profile information (DOB, Gender, Address).');
+      setError('Please complete all patient profile details (Date of Birth, Gender, and Address).');
       return;
     }
 
@@ -67,27 +67,26 @@ export default function SignUp({ setView }) {
 
       if (data.success) {
         if (data.isVerified === false) {
-          // If email delivery failed, backend returns the OTP directly
           if (data.otp) {
             setOtp(data.otp);
             setFallbackOtp(data.otp);
           }
           setSuccess(data.otp
-            ? '✅ Account created! Email delivery is unavailable — your OTP is shown below.'
-            : '✅ Account created! Check your email for the 6-digit verification code.');
+            ? 'Account created. Email delivery is unavailable — your verification code is provided below.'
+            : 'Account created. Please check your email for the 6-digit verification code.');
           setTimeout(() => {
             setSuccess('');
             setStep(2);
-          }, 2000);
+          }, 1500);
         } else {
-          setSuccess('🎉 Account registered successfully! Redirecting to login...');
-          setTimeout(() => setView('login'), 2500);
+          setSuccess('Account created successfully! Redirecting to sign in...');
+          setTimeout(() => setView('login'), 2000);
         }
       } else {
-        setError(data.message || 'Registration failed.');
+        setError(data.message || 'Registration could not be completed.');
       }
-    } catch (err) {
-      setError('Server connection error. Please try again.');
+    } catch {
+      setError('Could not connect to the server. Please check your internet connection.');
     } finally {
       setLoading(false);
     }
@@ -104,15 +103,15 @@ export default function SignUp({ setView }) {
     setLoading(true);
 
     try {
-    const res = await verifyRegistration(email, otp.trim());
+      const res = await verifyRegistration(email, otp.trim());
       if (res.success) {
-        setSuccess('🎉 Registration verified successfully! Accessing portal...');
+        setSuccess('Email verified successfully. Accessing your portal...');
       } else {
         setError(res.message || 'Invalid or expired verification code.');
         setLoading(false);
       }
-    } catch (err) {
-      setError('Server connection error. Please try again.');
+    } catch {
+      setError('Could not connect to the server. Please try again.');
       setLoading(false);
     }
   };
@@ -126,22 +125,21 @@ export default function SignUp({ setView }) {
         if (data.otp) {
           setOtp(data.otp);
           setFallbackOtp(data.otp);
-          setSuccess('New OTP generated — email unavailable, code shown below.');
+          setSuccess('New verification code generated and displayed below.');
         } else {
           setFallbackOtp('');
           setSuccess('A new verification code has been sent to your email.');
         }
-        setTimeout(() => setSuccess(''), 3500);
+        setTimeout(() => setSuccess(''), 3000);
       } else {
-        setError(data.message || 'Failed to resend OTP.');
+        setError(data.message || 'Unable to resend code.');
       }
-    } catch (err) {
-      setError('Server connection error.');
+    } catch {
+      setError('Could not connect to the server.');
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <div style={{
@@ -150,53 +148,69 @@ export default function SignUp({ setView }) {
       width: '100vw',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '2rem 1rem',
-      background: 'radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 45%)'
+      padding: '2.5rem 1rem',
+      backgroundColor: '#f8fafc',
     }}>
-      <div className="glass-panel fade-in" style={{
+      <div style={{
         width: '100%',
-        maxWidth: '550px',
-        padding: '2.5rem 2.25rem',
+        maxWidth: '540px',
+        padding: '2.5rem 2rem',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 'var(--radius-lg)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
       }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            borderRadius: '10px',
+            background: 'var(--color-primary)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.5rem',
+            color: '#ffffff',
+            fontWeight: 700,
+            marginBottom: '1rem',
+          }}>+</div>
           <h1 style={{
-            fontSize: '2rem',
-            fontWeight: 800,
-            background: 'linear-gradient(135deg, #22d3ee, #6366f1)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            marginBottom: '0.25rem'
+            fontSize: '1.45rem',
+            fontWeight: 700,
+            color: '#0f172a',
+            marginBottom: '0.35rem',
+            letterSpacing: '-0.02em'
           }}>{import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            Portal Registration • Secure Care Account Setup
+          <p style={{ color: '#64748b', fontSize: '0.88rem' }}>
+            {step === 1 ? 'Create an account to manage appointments and records' : 'Verify your email address'}
           </p>
         </div>
 
         {error && (
           <div style={{
-            background: 'rgba(239, 68, 68, 0.12)',
-            border: '1px solid rgba(239, 68, 68, 0.25)',
-            borderRadius: 'var(--radius-md)',
-            color: '#fca5a5',
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: 'var(--radius-sm)',
+            color: '#b91c1c',
             padding: '0.75rem 1rem',
             fontSize: '0.88rem',
             marginBottom: '1.25rem',
-            textAlign: 'center'
+            fontWeight: 500
           }}>
-            ⚠️ {error}
+            {error}
           </div>
         )}
 
         {success && (
           <div style={{
-            background: 'rgba(16, 185, 129, 0.12)',
-            border: '1px solid rgba(16, 185, 129, 0.25)',
-            borderRadius: 'var(--radius-md)',
-            color: '#34d399',
+            background: '#f0fdf4',
+            border: '1px solid #bbf7d0',
+            borderRadius: 'var(--radius-sm)',
+            color: '#15803d',
             padding: '0.75rem 1rem',
             fontSize: '0.88rem',
             marginBottom: '1.25rem',
-            textAlign: 'center'
+            fontWeight: 500
           }}>
             {success}
           </div>
@@ -204,15 +218,14 @@ export default function SignUp({ setView }) {
 
         {step === 1 && (
           <form onSubmit={handleSubmit}>
-            {/* Core Info Row */}
             <div className="grid-2-col" style={{ gap: '1rem' }}>
               <div className="form-group">
-                <label className="form-label">Full Name *</label>
+                <label className="form-label">Full name</label>
                 <input
                   type="text"
                   className="form-input"
                   required
-                  placeholder="John Doe"
+                  placeholder="e.g. Jane Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={loading}
@@ -220,7 +233,7 @@ export default function SignUp({ setView }) {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Portal Role *</label>
+                <label className="form-label">Account type</label>
                 <select
                   className="form-select"
                   required
@@ -228,22 +241,22 @@ export default function SignUp({ setView }) {
                   onChange={(e) => setRole(e.target.value)}
                   disabled={loading}
                 >
-                  <option value="Patient">Patient Portal</option>
-                  <option value="Doctor">Doctor Console</option>
-                  <option value="Nurse">Nurse Station</option>
+                  <option value="Patient">Patient</option>
+                  <option value="Doctor">Doctor</option>
+                  <option value="Nurse">Nurse</option>
                   <option value="Lab Technician">Lab Technician</option>
-                  <option value="Pharmacist">Pharmacist Portal</option>
+                  <option value="Pharmacist">Pharmacist</option>
                 </select>
               </div>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Email Address *</label>
+              <label className="form-label">Email address</label>
               <input
                 type="email"
                 className="form-input"
                 required
-                placeholder="e.g. john@apollo.com"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
@@ -252,12 +265,12 @@ export default function SignUp({ setView }) {
 
             <div className="grid-2-col" style={{ gap: '1rem' }}>
               <div className="form-group">
-                <label className="form-label">Password *</label>
+                <label className="form-label">Password</label>
                 <input
                   type="password"
                   className="form-input"
                   required
-                  placeholder="••••••••"
+                  placeholder="At least 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading}
@@ -265,12 +278,12 @@ export default function SignUp({ setView }) {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Phone Number *</label>
+                <label className="form-label">Phone number</label>
                 <input
                   type="tel"
                   className="form-input"
                   required
-                  placeholder="e.g. 555-0199"
+                  placeholder="e.g. (555) 019-2834"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   disabled={loading}
@@ -280,21 +293,21 @@ export default function SignUp({ setView }) {
 
             {/* Conditional Patient Fields */}
             {role === 'Patient' && (
-              <div className="fade-in" style={{
-                background: 'rgba(255, 255, 255, 0.02)',
-                border: '1px solid var(--glass-border)',
+              <div style={{
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
                 borderRadius: 'var(--radius-md)',
                 padding: '1.25rem',
                 marginTop: '0.5rem',
                 marginBottom: '1.25rem'
               }}>
-                <p style={{ fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
-                  Patient Profile Information
+                <p style={{ fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginBottom: '0.85rem' }}>
+                  Patient Information
                 </p>
 
                 <div className="grid-split" style={{ gap: '1rem', marginBottom: '0.75rem' }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label">Date of Birth *</label>
+                    <label className="form-label">Date of birth</label>
                     <input
                       type="date"
                       className="form-input"
@@ -306,7 +319,7 @@ export default function SignUp({ setView }) {
                   </div>
 
                   <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label">Gender *</label>
+                    <label className="form-label">Gender</label>
                     <select
                       className="form-select"
                       required={role === 'Patient'}
@@ -322,12 +335,12 @@ export default function SignUp({ setView }) {
                 </div>
 
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">Permanent Address *</label>
+                  <label className="form-label">Home address</label>
                   <input
                     type="text"
                     className="form-input"
                     required={role === 'Patient'}
-                    placeholder="e.g. 104 Park Ave, New York, NY"
+                    placeholder="Street address, city, state"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     disabled={loading}
@@ -338,8 +351,8 @@ export default function SignUp({ setView }) {
 
             {/* Conditional Staff Department Field */}
             {role !== 'Patient' && (
-              <div className="form-group fade-in">
-                <label className="form-label">Assigned Clinic Department *</label>
+              <div className="form-group">
+                <label className="form-label">Department assignment</label>
                 <select
                   className="form-select"
                   required
@@ -362,47 +375,52 @@ export default function SignUp({ setView }) {
             <button
               type="submit"
               className="btn btn-primary"
-              style={{ width: '100%', padding: '0.85rem', marginTop: '1rem' }}
+              style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem', fontSize: '0.92rem' }}
               disabled={loading}
             >
-              {loading ? 'Creating Portal Account...' : 'Create Account'}
+              {loading ? 'Creating account...' : 'Create account'}
             </button>
           </form>
         )}
 
         {step === 2 && (
           <form onSubmit={handleVerifyRegistration} className="fade-in">
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+            <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: 1.5, marginBottom: '1.25rem' }}>
               {fallbackOtp
-                ? 'Email delivery is currently unavailable. Your OTP is displayed below — copy it into the field and click Verify.'
-                : 'Account successfully registered! Enter the 6-digit code sent to your email to activate your portal.'}
+                ? 'Email delivery is currently unavailable. Your verification code is displayed below.'
+                : 'Enter the 6-digit code sent to your email to verify your account.'}
             </p>
 
             {/* Fallback OTP banner */}
             {fallbackOtp && (
               <div style={{
-                background: 'rgba(99,102,241,0.12)',
-                border: '2px dashed rgba(99,102,241,0.45)',
+                background: '#fffbeb',
+                border: '1px solid #fde68a',
                 borderRadius: 'var(--radius-md)',
                 padding: '1rem',
                 textAlign: 'center',
                 marginBottom: '1.25rem'
               }}>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0 0 0.35rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Your Verification OTP</p>
-                <p style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '0.3em', color: '#818cf8', margin: 0 }}>{fallbackOtp}</p>
-                <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', margin: '0.35rem 0 0' }}>⏱ Expires in 15 minutes</p>
+                <p style={{ fontSize: '0.72rem', color: '#b45309', margin: '0 0 0.35rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Your Verification Code</p>
+                <p style={{ fontSize: '1.8rem', fontWeight: 700, letterSpacing: '0.25em', color: '#0f172a', margin: 0 }}>{fallbackOtp}</p>
+                <p style={{ fontSize: '0.75rem', color: '#92400e', margin: '0.35rem 0 0' }}>Valid for 15 minutes</p>
               </div>
             )}
 
             <div className="form-group">
-              <label className="form-label">6-Digit Verification Code</label>
+              <label className="form-label">6-digit code</label>
               <input
                 type="text"
                 className="form-input"
                 required
                 maxLength={6}
                 placeholder="123456"
-                style={{ textAlign: 'center', letterSpacing: '0.25em', fontSize: '1.25rem', fontWeight: 'bold' }}
+                style={{
+                  textAlign: 'center',
+                  letterSpacing: '0.3em',
+                  fontSize: '1.3rem',
+                  fontWeight: 600
+                }}
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
                 disabled={loading}
@@ -411,48 +429,50 @@ export default function SignUp({ setView }) {
             <button
               type="submit"
               className="btn btn-primary"
-              style={{ width: '100%', padding: '0.85rem', marginTop: '0.5rem' }}
+              style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem' }}
               disabled={loading}
             >
-              {loading ? 'Verifying...' : 'Verify & Log In'}
+              {loading ? 'Verifying...' : 'Verify and continue'}
             </button>
             <button
               type="button"
               onClick={handleResendOtp}
               className="btn btn-secondary"
-              style={{ width: '100%', padding: '0.75rem', marginTop: '0.6rem', fontSize: '0.88rem' }}
+              style={{ width: '100%', padding: '0.65rem', marginTop: '0.5rem', fontSize: '0.85rem' }}
               disabled={loading}
             >
-              Resend Code
+              Resend code
             </button>
             <button
               type="button"
               onClick={() => { setStep(1); setFallbackOtp(''); setOtp(''); }}
               className="btn btn-secondary"
-              style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem', fontSize: '0.85rem' }}
+              style={{ width: '100%', padding: '0.65rem', marginTop: '0.5rem', fontSize: '0.85rem', border: 'none' }}
               disabled={loading}
             >
-              ← Back
+              &larr; Back
             </button>
           </form>
         )}
 
-        <div style={{ textAlign: 'center', marginTop: '1.5rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1.25rem' }}>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-            Already have a workspace account?{' '}
+        <div style={{ textAlign: 'center', marginTop: '1.5rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.25rem' }}>
+          <p style={{ fontSize: '0.88rem', color: '#64748b' }}>
+            Already have an account?{' '}
             <span
               onClick={() => setView('login')}
               style={{ color: 'var(--color-primary)', cursor: 'pointer', fontWeight: 600 }}
             >
-              Sign In
+              Sign in
             </span>
           </p>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+          <p style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '0.5rem' }}>
             <span
               onClick={() => setView('home')}
-              style={{ cursor: 'pointer', textDecoration: 'underline' }}
+              style={{ cursor: 'pointer' }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'var(--color-primary)'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = '#64748b'; }}
             >
-              ➔ Return to Homepage
+              &larr; Return to hospital website
             </span>
           </p>
         </div>

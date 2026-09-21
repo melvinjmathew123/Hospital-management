@@ -43,12 +43,12 @@ export default function PatientDashboard() {
   }, [error]);
 
   const sidebarItems = [
-    { id: 'profile', label: 'My Clinical File', icon: '📂' },
-    { id: 'appointments', label: 'My Appointments', icon: '⏰' },
-    { id: 'book', label: 'Book Appointment', icon: '📅' },
-    { id: 'labs', label: 'Lab Reports', icon: '🧪' },
-    { id: 'prescriptions', label: 'My Prescriptions', icon: '📋' },
-    { id: 'billing', label: 'Bills & Payments', icon: '💳' }
+    { id: 'profile', label: 'My Clinical File' },
+    { id: 'appointments', label: 'My Appointments' },
+    { id: 'book', label: 'Book Appointment' },
+    { id: 'labs', label: 'Lab Reports' },
+    { id: 'prescriptions', label: 'My Prescriptions' },
+    { id: 'billing', label: 'Bills & Payments' }
   ];
 
   if (loading) {

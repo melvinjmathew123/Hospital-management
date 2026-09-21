@@ -40,9 +40,9 @@ export default function NurseDashboard() {
   };
 
   const sidebarItems = [
-    { id: 'beds', label: 'Beds Grid Matrix', icon: '🛏️' },
-    { id: 'admissions', label: 'Ward Admissions', icon: '🏨' },
-    { id: 'vitals', label: 'Log Patient Vitals', icon: '📈' }
+    { id: 'beds', label: 'Beds Grid Matrix' },
+    { id: 'admissions', label: 'Ward Admissions' },
+    { id: 'vitals', label: 'Log Patient Vitals' }
   ];
 
   return (

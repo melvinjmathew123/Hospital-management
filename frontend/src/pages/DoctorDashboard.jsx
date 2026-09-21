@@ -57,10 +57,10 @@ export default function DoctorDashboard() {
   };
 
   const sidebarItems = [
-    { id: 'appointments', label: 'Appointments Queue', icon: '⏰' },
-    { id: 'patients', label: 'Clinical Patient Records', icon: '📂' },
-    { id: 'consultation', label: 'Write Consultation', icon: '🩺' },
-    { id: 'history', label: 'Consultation History', icon: '📜' }
+    { id: 'appointments', label: 'Appointments Queue' },
+    { id: 'patients', label: 'Clinical Patient Records' },
+    { id: 'consultation', label: 'Write Consultation' },
+    { id: 'history', label: 'Consultation History' }
   ];
 
   return (

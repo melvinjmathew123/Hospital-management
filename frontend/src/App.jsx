@@ -33,19 +33,18 @@ function MainApp() {
         width: '100vw',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #030712, #0b1528)',
-        color: '#22d3ee',
-        fontFamily: 'sans-serif'
+        background: 'var(--bg-main)',
+        color: 'var(--text-main)',
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
-            width: '50px',
-            height: '50px',
-            border: '3px solid rgba(34, 211, 238, 0.1)',
-            borderTop: '3px solid #22d3ee',
+            width: '46px',
+            height: '46px',
+            border: '3px solid #e2e8f0',
+            borderTop: '3px solid var(--color-primary)',
             borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-            margin: '0 auto 1.5rem auto'
+            animation: 'spin 0.8s linear infinite',
+            margin: '0 auto 1.25rem auto'
           }}></div>
           <style>{`
             @keyframes spin {
@@ -53,8 +52,8 @@ function MainApp() {
               100% { transform: rotate(360deg); }
             }
           `}</style>
-          <h2>{import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}</h2>
-          <p style={{ color: '#9ca3af', fontSize: '0.9rem', marginTop: '0.5rem' }}>Loading secure portal workspace...</p>
+          <h2 style={{ color: 'var(--text-main)', fontWeight: 700, fontSize: '1.4rem' }}>{import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.35rem' }}>Loading secure healthcare portal...</p>
         </div>
       </div>
     );
