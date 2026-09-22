@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DashboardLayout from '../components/DashboardLayout';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, API_URL } from '../context/AuthContext';
 import { fetchHospitalData } from '../store/slices/hospitalSlice';
 
 import AlertMessage from '../components/shared/AlertMessage';
@@ -19,11 +19,10 @@ export default function HospitalAdminDashboard() {
 
   // bills are fetched separately as they're not in hospitalSlice
   const [bills, setBills] = useState([]);
-  const { API_URL } = useAuth();
 
   const fetchBills = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://apollo-hms-backend.onrender.com/api'}/billing`, {
+      const res = await fetch(`${API_URL}/billing`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();

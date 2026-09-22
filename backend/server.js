@@ -32,6 +32,7 @@ app.use(express.json());
 const hardcodedOrigins = [
   'https://hospital-management-wk23.vercel.app',
   'https://hospital-management-2q91.vercel.app',
+  'https://voguemark.shop',
   'http://localhost:5173',
   'http://localhost:5000',
   'http://localhost:3000',
