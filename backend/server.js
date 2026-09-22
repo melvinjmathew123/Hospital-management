@@ -33,6 +33,7 @@ const hardcodedOrigins = [
   'https://hospital-management-wk23.vercel.app',
   'https://hospital-management-2q91.vercel.app',
   'https://voguemark.shop',
+  'https://www.voguemark.shop',
   'http://localhost:5173',
   'http://localhost:5000',
   'http://localhost:3000',
@@ -48,6 +49,7 @@ const corsOptions = {
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (/^https:\/\/([a-z0-9-]+\.)?voguemark\.shop$/.test(origin)) return callback(null, true);
     if (/^https:\/\/[\w-]+\.vercel\.app$/.test(origin)) return callback(null, true);
     if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return callback(null, true);
     console.warn(`CORS blocked: ${origin}`);

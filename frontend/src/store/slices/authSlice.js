@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-export const API_URL = import.meta.env.VITE_API_URL || 'https://voguemark.shop/api';
+export const API_URL = import.meta.env.VITE_API_URL || 'https://api.voguemark.shop/api';
 
 export const fetchCurrentUser = createAsyncThunk(
   'auth/fetchCurrentUser',
