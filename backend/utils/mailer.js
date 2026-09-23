@@ -30,7 +30,7 @@ const createTransporter = () => {
  * @param {'register'|'forgot'|'login'} purpose - determines email subject/body
  */
 const sendOtpEmail = async (to, otp, purpose = 'register') => {
-  const hospitalName = process.env.HOSPITAL_NAME || 'Apollo Hospital';
+  const hospitalName = process.env.HOSPITAL_NAME || 'Voguemark Hospital';
 
   const subjects = {
     register: `${hospitalName} — Email Verification Code`,
@@ -163,7 +163,7 @@ const sendOtpEmail = async (to, otp, purpose = 'register') => {
  * @param {string} [icon]   - emoji icon shown in the header (default 🏥)
  */
 const sendNotificationEmail = async (to, subject, title, message, icon = '🏥') => {
-  const hospitalName = process.env.HOSPITAL_NAME || 'Apollo Hospital';
+  const hospitalName = process.env.HOSPITAL_NAME || 'Voguemark Hospital';
 
   const html = `
 <!DOCTYPE html>

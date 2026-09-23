@@ -52,7 +52,7 @@ function MainApp() {
               100% { transform: rotate(360deg); }
             }
           `}</style>
-          <h2 style={{ color: 'var(--text-main)', fontWeight: 700, fontSize: '1.4rem' }}>{import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}</h2>
+          <h2 style={{ color: 'var(--text-main)', fontWeight: 700, fontSize: '1.4rem' }}>{import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'}</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.35rem' }}>Loading secure healthcare portal...</p>
         </div>
       </div>

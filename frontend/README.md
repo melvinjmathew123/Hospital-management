@@ -1,4 +1,4 @@
-# 🏥 MediPulse / Apollo HMS - Frontend Application
+# 🏥 MediPulse / Voguemark HMS - Frontend Application
 
 > Modern, responsive React 19 + Vite single-page web client for the Hospital Management System (HMS).
 
@@ -57,7 +57,7 @@ Create a `.env` file in this directory with the following variables:
 VITE_API_URL=http://localhost:5000/api
 
 # Hospital Branding
-VITE_HOSPITAL_NAME=Apollo Hospital
+VITE_HOSPITAL_NAME=Voguemark Hospital
 
 # Razorpay Key ID (for payments in test or live mode)
 VITE_RAZORPAY_KEY_ID=rzp_test_your_key_id_here

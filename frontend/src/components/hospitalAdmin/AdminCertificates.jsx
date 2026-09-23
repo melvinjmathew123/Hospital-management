@@ -77,7 +77,7 @@ export default function AdminCertificates({ patients, showMsg }) {
             fontFamily: 'serif', position: 'relative'
           }}>
             <div style={{ textAlign: 'center', borderBottom: '2px solid #111827', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0, textTransform: 'uppercase' }}>{(import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital').toUpperCase()} MEDICAL CENTER</h3>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0, textTransform: 'uppercase' }}>{(import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital').toUpperCase()} MEDICAL CENTER</h3>
               <p style={{ fontSize: '0.8rem', margin: '0.25rem 0 0 0', fontStyle: 'italic' }}>121 Health Care Lane, NY • Phone: 555-0100</p>
             </div>
             <h4 style={{ textAlign: 'center', fontSize: '1.25rem', textDecoration: 'underline', marginBottom: '1.5rem' }}>
@@ -94,7 +94,7 @@ export default function AdminCertificates({ patients, showMsg }) {
                 <div style={{ width: '80px', height: '80px', border: '3px solid rgba(220, 38, 38, 0.4)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(220, 38, 38, 0.6)', fontWeight: 'bold', transform: 'rotate(-15deg)', marginBottom: '0.5rem' }}>
                   OFFICIAL STAMP
                 </div>
-                <span>{import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'} Authority</span>
+                <span>{import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'} Authority</span>
               </div>
               <div style={{ textAlign: 'center', fontSize: '0.8rem', borderTop: '1px solid #111827', width: '150px', paddingTop: '0.25rem' }}>
                 Authorized Signature

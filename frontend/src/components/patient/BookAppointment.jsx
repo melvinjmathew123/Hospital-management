@@ -112,7 +112,7 @@ export default function BookAppointment({ doctors, patientProfile, token, onBook
       <div className="glass-panel" style={{ padding: '2rem' }}>
         <h2 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>📅 Book an Appointment</h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.75rem' }}>
-          Schedule a consultation with any available Apollo doctor. Each time slot holds up to {MAX_PER_SLOT} patients.
+          Schedule a consultation with any available Voguemark doctor. Each time slot holds up to {MAX_PER_SLOT} patients.
         </p>
 
         {bookMsg.text && (
@@ -272,7 +272,7 @@ export default function BookAppointment({ doctors, patientProfile, token, onBook
           <h3 style={{ fontSize: '1.1rem', marginBottom: '1.25rem' }}>How to Book</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {[
-              { step: '01', title: 'Choose Your Doctor', desc: 'Select from our team of certified Apollo specialists.' },
+              { step: '01', title: 'Choose Your Doctor', desc: 'Select from our team of certified Voguemark specialists.' },
               { step: '02', title: 'Pick a Date', desc: 'Choose a date and see live slot availability per session.' },
               { step: '03', title: 'Select a Time Slot', desc: `Each slot holds up to ${MAX_PER_SLOT} patients. Green = open, Red = full.` },
               { step: '04', title: 'Describe Symptoms', desc: 'Briefly describe your symptoms to help your doctor prepare.' }
@@ -314,7 +314,7 @@ export default function BookAppointment({ doctors, patientProfile, token, onBook
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.7 }}>
             <b style={{ color: 'var(--color-primary)' }}>ℹ️ Note:</b> Each time slot accepts a maximum of <b>{MAX_PER_SLOT} patients</b>.
             Your token number within the slot will be shown after booking.
-            Online consultations are conducted via the Apollo patient portal.
+            Online consultations are conducted via the Voguemark patient portal.
           </p>
         </div>
       </div>

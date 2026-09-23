@@ -116,7 +116,7 @@ export default function DashboardLayout({ sidebarItems, activeTab, setActiveTab,
             fontWeight: 700, fontSize: '1.1rem', color: '#ffffff',
           }}>+</div>
           <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f172a' }}>
-            {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}
+            {import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'}
           </span>
         </div>
         <button
@@ -157,7 +157,7 @@ export default function DashboardLayout({ sidebarItems, activeTab, setActiveTab,
                 fontSize: '0.92rem', fontWeight: 700, color: '#f8fafc',
                 whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
               }}>
-                {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}
+                {import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'}
               </h2>
               <button
                 onClick={() => setIsSidebarOpen(false)}
@@ -286,7 +286,7 @@ export default function DashboardLayout({ sidebarItems, activeTab, setActiveTab,
               {sidebarItems.find(item => item.id === activeTab)?.label || 'Dashboard'}
             </h1>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
-              {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'} &bull; {user?.role} Workspace
+              {import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'} &bull; {user?.role} Workspace
             </p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

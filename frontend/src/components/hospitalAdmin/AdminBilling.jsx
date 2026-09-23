@@ -368,11 +368,11 @@ export default function AdminBilling({ bills, token, onRefresh, showMsg }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid var(--glass-border)', paddingBottom: '1.5rem', marginBottom: '1.5rem' }}>
                 <div>
                   <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    🏥 {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}
+                    🏥 {import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'}
                   </h2>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
                     12, Health City Road, Sector 5, India<br />
-                    Phone: +91 11-4040-5050 | info@apollohms.com
+                    Phone: +91 11-4040-5050 | info@voguemark.shop
                   </p>
                 </div>
                 <div style={{ textAlign: 'right' }}>
@@ -474,7 +474,7 @@ export default function AdminBilling({ bills, token, onRefresh, showMsg }) {
               </div>
 
               <div style={{ marginTop: '3rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Thank you for choosing {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}. This is a computer generated system receipt. For any questions regarding your medical claims, contact customer billing service.
+                Thank you for choosing {import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'}. This is a computer generated system receipt. For any questions regarding your medical claims, contact customer billing service.
               </div>
             </div>
 

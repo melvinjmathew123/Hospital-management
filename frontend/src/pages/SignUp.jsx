@@ -180,7 +180,7 @@ export default function SignUp({ setView }) {
             color: '#0f172a',
             marginBottom: '0.35rem',
             letterSpacing: '-0.02em'
-          }}>{import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}</h1>
+          }}>{import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'}</h1>
           <p style={{ color: '#64748b', fontSize: '0.88rem' }}>
             {step === 1 ? 'Create an account to manage appointments and records' : 'Verify your email address'}
           </p>

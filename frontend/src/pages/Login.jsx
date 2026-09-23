@@ -124,7 +124,7 @@ export default function Login({ setView }) {
             fontSize: '1.45rem', fontWeight: 700, marginBottom: '0.35rem',
             color: '#0f172a', letterSpacing: '-0.02em',
           }}>
-            {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}
+            {import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'}
           </h1>
           <p style={{ color: '#64748b', fontSize: '0.88rem' }}>
             {step === 1 ? 'Sign in to access your healthcare portal' : 'Enter verification code'}

@@ -86,7 +86,7 @@ export default function Homepage({ setView }) {
           }}>+</div>
           <div>
             <h1 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.01em' }}>
-              {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}
+              {import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'}
             </h1>
             <p style={{ fontSize: '0.7rem', color: '#64748b', margin: 0 }}>
               Healthcare Network
@@ -311,7 +311,7 @@ export default function Homepage({ setView }) {
         <section id="about" style={{ padding: '5rem 1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
           <div className="grid-2-col" style={{ alignItems: 'center', gap: '3rem' }}>
             <div>
-              <span style={{ color: 'var(--color-primary)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>ABOUT APOLLO HOSPITAL</span>
+              <span style={{ color: 'var(--color-primary)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>ABOUT VOGUEMARK HOSPITAL</span>
               <h2 style={{ fontSize: '2rem', fontWeight: 700, marginTop: '0.35rem', marginBottom: '1rem', color: '#0f172a' }}>
                 Dedicated to Patient Care Since 1983
               </h2>
@@ -372,7 +372,7 @@ export default function Homepage({ setView }) {
         <div className="grid-3-col" style={{ maxWidth: '1200px', margin: '0 auto', gap: '2.5rem', marginBottom: '2.5rem' }}>
           <div>
             <h3 style={{ color: '#ffffff', fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem' }}>
-              {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}
+              {import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'}
             </h3>
             <p style={{ lineHeight: 1.6, maxWidth: '320px', color: '#94a3b8' }}>
               Committed to excellence in patient healthcare, preventative medicine, and comprehensive clinical services.
@@ -390,11 +390,11 @@ export default function Homepage({ setView }) {
             <h4 style={{ color: '#ffffff', fontSize: '0.88rem', fontWeight: 600, marginBottom: '0.75rem' }}>Location & Contact</h4>
             <p>121 Healthcare Blvd, Medical District</p>
             <p style={{ marginTop: '0.25rem' }}>Phone: +1 (555) 0100</p>
-            <p style={{ marginTop: '0.25rem' }}>Email: support@apollohospital.org</p>
+            <p style={{ marginTop: '0.25rem' }}>Email: support@voguemark.shop</p>
           </div>
         </div>
         <div style={{ maxWidth: '1200px', margin: '0 auto', borderTop: '1px solid #1e293b', paddingTop: '1.5rem', textAlign: 'center', fontSize: '0.8rem', color: '#64748b' }}>
-          <p>© {new Date().getFullYear()} {import.meta.env.VITE_HOSPITAL_NAME || 'Apollo Hospital'}. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {import.meta.env.VITE_HOSPITAL_NAME || 'Voguemark Hospital'}. All rights reserved.</p>
         </div>
       </footer>
     </div>

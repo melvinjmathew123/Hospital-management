@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: apollo-hms-backend
+    name: voguemark-hms-backend
     runtime: node
     rootDir: backend
     buildCommand: npm install
@@ -13,7 +13,7 @@ services:
       - key: JWT_SECRET
         sync: false
       - key: HOSPITAL_NAME
-        value: Apollo Hospital
+        value: Voguemark Hospital
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET

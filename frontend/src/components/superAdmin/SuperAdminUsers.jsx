@@ -61,7 +61,7 @@ export default function SuperAdminUsers({ users, token, onRefresh, showMsg }) {
           <div className="form-group">
             <label className="form-label">Email Address</label>
             <input
-              type="email" className="form-input" required placeholder="e.g. j.watson@apollo.com"
+              type="email" className="form-input" required placeholder="e.g. j.watson@voguemark.shop"
               value={newUser.email}
               onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
             />

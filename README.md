@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏥 MediPulse / Apollo Hospital Management System (HMS)
+# 🏥 MediPulse / Voguemark Hospital Management System (HMS)
 
 ### *Enterprise-Grade, Full-Stack MERN Healthcare Operations & Clinical Portal*
 
@@ -292,7 +292,7 @@ PORT=5000
 NODE_ENV=development
 MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/hms?retryWrites=true&w=majority
 JWT_SECRET=your_jwt_super_secret_key_change_me
-HOSPITAL_NAME=Apollo Hospital
+HOSPITAL_NAME=Voguemark Hospital
 CLIENT_URL=http://localhost:5173,http://localhost:3000
 
 # Razorpay Settings (Set to 'true' for simulated testing without keys)
@@ -312,7 +312,7 @@ Create a `.env` file in the `frontend/` directory with the following variables:
 
 ```env
 VITE_API_URL=http://localhost:5000/api
-VITE_HOSPITAL_NAME=Apollo Hospital
+VITE_HOSPITAL_NAME=Voguemark Hospital
 VITE_RAZORPAY_KEY_ID=rzp_test_your_key_id
 ```
 
